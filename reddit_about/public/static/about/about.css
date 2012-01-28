@@ -1,0 +1,59 @@
+.about-page {
+    width: 950px;
+    margin: 30px auto;
+}
+
+.about-page .title {
+    background: url('header.png');
+    width: 452px;
+    height: 43px;
+    padding: 22px 226px 45px 272px;
+    text-align: center;
+}
+
+.about-page .title h1 {
+    color: #336699;
+    font-weight: normal;
+    font-size: 22px;
+    line-height: 43px;
+    margin: 0;
+}
+
+.about-page .about-menu {
+    display: block;
+    width: 815px;
+    height: 36px;
+    background: #eff7ff;
+    border-bottom: 3px solid #5f99cf;
+    margin: 0;
+    padding-left: 135px;
+}
+
+.about-page .about-menu li {
+    margin-right: 15px;
+}
+
+.about-page .about-menu li a {
+    display: inline-block;
+    background: white;
+    color: #828282;
+    font-size: 14px;
+    height: 34px;
+    width: 110px;
+    line-height: 34px;
+    border: 2px solid #ccc;
+    border-width: 0 2px 0 2px;
+    text-align: center;
+}
+
+.about-page .about-menu li a:hover {
+    color: #555;
+    background: #a7c8e7;
+    border-color: #a7c8e7;
+}
+
+.about-page .about-menu li.selected a {
+    color: white;
+    background: #5f99cf;
+    border-color: #5f99cf;
+}
