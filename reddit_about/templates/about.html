@@ -1,1 +1,88 @@
+<%!
+  import locale
+%>
+<%namespace file="utils.html" import="timestamp, format_number, _md" />
 
+<div class="definition">
+  <div class="info">
+    <strong>reddit</strong><em>noun, verb</em>
+    <p class="etc">redd&middot;it, redd&middot;it&middot;ing; see redditor, subreddit</p>
+  </div>
+  <div class="entries">
+    <p><em>noun</em> a type of online community where users vote on content</p>
+    <p><em>verb</em> to take part in a reddit community</p>
+  </div>
+</div>
+<div class="quote">
+  <blockquote><a href="${thing.quote['url']}">&ldquo;${thing.quote['body']}&rdquo;</a></blockquote>
+  <div class="credit">
+    &mdash;<a href="${thing.quote['author_url'] or thing.quote['url']}" class="author">${thing.quote['author']}</a>,&nbsp;${timestamp(thing.quote['date'], thing.quote['date'].strftime('%D'))}
+  </div>
+  <div class="via">
+    via
+    %if thing.quote['via']:
+      &#32;<a class="user" href="/user/${thing.quote['via']}">${thing.quote['via']}</a>
+      &#32;from
+    %endif
+    &#32;<a class="sr" href="/r/${thing.quote['sr']}">/r/${thing.quote['sr']}</a>
+  </div>
+</div>
+<div class="slideshow">
+  <div class="image mock">
+  </div>
+  <div class="info">
+    <span class="controls">
+      <button>&lsaquo;</button>
+      <span class="count">1 / ${len(thing.images)}</span>
+      <button>&rsaquo;</button>
+    </span>
+    <span class="description">
+      <a class="title" href="${thing.images[0]['url']}">${thing.images[0]['title']}</a>
+      &#32;by
+      &#32;<a class="author" href="${thing.images[0]['author_url']}">${thing.images[0]['author']}</a>
+    </span>
+    <span class="via">
+      via
+      %if thing.images[0]['via']:
+        &#32;<a class="user" href="/user/${thing.images[0]['via']}">${thing.images[0]['via']}</a>
+        &#32;from
+      %endif
+      &#32;<a class="sr" href="/r/${thing.images[0]['sr']}">/r/${thing.images[0]['sr']}</a>
+    </span>
+  </div>
+</div>
+<h2>${_('how reddit works')}</h2>
+<div class="howitworks inner">
+  <div class="voting">${_md('**redditors vote** on which stories and discussions are important. the hottest stories rise to the top, while cooler stories sink.')}</div>
+  <div class="comments">${_md('**comments can be posted on every story** on reddit. comments add information, context, and humor.')}</div>
+  <div class="communities">${_md('**anyone can create a community** (called "subreddits"). each subreddit is independent and moderated by a team of volunteers.')}</div>
+  <div class="opensource">${_md('**reddit is open source**. community members are constantly tinkering and contributing features, bug fixes, and translations back to the site.')}</div>
+</div>
+<h2>${_('stats at a glance')}</h2>
+<div class="inner">
+  <div class="stat">
+    <div>${_('reddit currently powers')}</div>
+    <div class="value">${format_number(thing.stats['active_communities'])}</div>
+    <div class="unit"><span class="metric" title="${_('communities with a post or comment in the past 24 hours')}">${_('active communities')}</span></div>
+  </div>
+  <div class="stat">
+    <div>${_('consisting of over')}</div>
+    <div class="value">${format_number(thing.stats['active_accounts'])}</div>
+    <div class="unit"><span class="metric" title="${_('accounts that have accessed reddit in the past 24 hours')}">${_('active redditors')}</span></div>
+  </div>
+  <div class="stat">
+    <img class="map mock" src="${thing.stats['country_map']}" alt="country map" />
+    <div>${_('redditors hail from over')}</div>
+    <div class="value">${format_number(thing.stats["country_count"])}</div>
+    <div class="unit">${_('different countries')}</div>
+  </div>
+</div>
+<h2>${_('history')}</h2>
+<div class="timeline mock">
+</div>
+<h2>${_('brothers & sisters')}</h2>
+<ul class="sites inner">
+  %for site in thing.sites:
+    <li><a href="${site['url']}"><img src="${site["icon"]}" alt="${site['name']} icon" /> ${site['name']}</a></li>
+  %endfor
+</ul>

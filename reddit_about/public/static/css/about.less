@@ -1,14 +1,25 @@
 @uitext: #336699;
 @lightbg: #eff7ff;
 @accentblue: #5f99cf;
-@accentblue-hover: lighten(desaturate(@accentblue, 15%), 20%);
+@accentblue-hover: lighten(desaturate(@accentblue, 7%), 30%);
 
 .about-page {
     @page-width: 950px;
     width: @page-width;
     margin: 30px auto;
 
-    .title {
+    &, button {
+        /* need to reset the font size for buttons as well */
+        font-size:15px;
+    }
+
+    @inner-offset: 5px;
+    @inner-width: @page-width - 2*@inner-offset;
+    .inner {
+        margin: 0 @inner-offset;
+    }
+
+    .abouttitle {
         @x1: 272px;
         @y1: 22px;
         @width: 452px;
@@ -25,12 +36,22 @@
         text-align: center;
     }
 
-    .title h1 {
+    .abouttitle h1 {
         color: @uitext;
         font-weight: normal;
         font-size: 22px;
         line-height: 43px;
         margin: 0;
+    }
+
+    h2 {
+        font-weight: normal;
+        font-size: 18px;
+        color: black;
+        border-bottom: 2px solid #ccc;
+        padding-top: 30px;
+        margin-bottom: 16px;
+        clear: both;
     }
 
     .about-menu {
@@ -47,28 +68,200 @@
         margin-right: 15px;
     }
 
-    .about-menu li a {
-        display: inline-block;
-        background: white;
-        color: #828282;
-        font-size: 14px;
-        height: 34px;
-        width: 110px;
-        line-height: 34px;
-        border: 2px solid #ccc;
-        border-width: 0 2px 0 2px;
-        text-align: center;
+    .about-menu li {
+        a {
+            display: inline-block;
+            background: white;
+            color: #828282;
+            font-size: 14px;
+            height: 34px;
+            width: 110px;
+            line-height: 34px;
+            border: 2px solid #ccc;
+            border-width: 0 2px 0 2px;
+            text-align: center;
 
-        &:hover {
-            color: #555;
-            background: @accentblue-hover;
-            border-color: @accentblue-hover;
+            &:hover {
+                color: #555;
+                border-color: darken(@accentblue-hover, 10%);
+                background: @accentblue-hover;
+            }
+        }
+
+        &.selected a {
+            color: white;
+            background: @accentblue;
+            border-color: @accentblue;
         }
     }
 
-    .about-menu li.selected a {
-        color: white;
-        background: @accentblue;
-        border-color: @accentblue;
+    .via a:hover, .author:hover {
+        text-decoration: underline;
     }
+
+    .definition {
+        font-size: 16px;
+        margin-top: 20px;
+        .info {
+            float: left;
+        }
+        .entries {
+            float: right;
+            margin-top: 6px;
+        }
+        strong {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .etc {
+            color: #666;
+        }
+
+        em {
+            font-style: italic;
+            margin: 0 .75em;
+        }
+    }
+
+    .quote, .slideshow {
+        .via, .via a {
+            font-size: 12px;
+            color: lighten(@uitext, 20%);
+        }
+
+    }
+
+    .quote {
+        clear: both;
+        padding-top: 20px;
+
+        blockquote {
+            color: @uitext;
+            font-size: 22px;
+        }
+
+        .author {
+            margin: 0;
+        }
+
+        .credit, .via {
+            text-align: right;
+        }
+
+        .credit {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+    }
+
+    .howitworks {
+        @icon-size: 60px;
+        @icon-spacing: 18px;
+        @right-padding: 50px;
+
+        div {
+            float: left;
+            width: @inner-width / 2 - @icon-size - @icon-spacing - @right-padding;
+            padding-left: @icon-size + @icon-spacing;
+            padding-right: @right-padding;
+            height: 5em;
+            line-height: 1.35em;
+            &.voting { background:url('../about/voting.png') no-repeat; }
+            &.comments { background:url('../about/comments.png') no-repeat; }
+            &.communities { background:url('../about/communities.png') no-repeat; }
+            &.opensource { background:url('../about/opensource.png') no-repeat; }
+        }
+
+        strong {
+            color: orangered;
+            font-weight: bold;
+        }
+    }
+
+    .slideshow {
+        margin-top: 20px;
+        color: #555;
+
+        .image {
+            width: @page-width;
+            height: 300px;
+        }
+
+        .controls, .controls button {
+            color: @uitext;
+        }
+
+        button {
+            border: none;
+            background: none;
+            margin: 0 3px;
+            padding: 0 7px;
+            cursor: pointer;
+            &:hover {
+                background: lighten(@uitext, 50%);
+            }
+        }
+
+        .info {
+            position: relative;
+            margin-top: 4px;
+
+            .description {
+                position: absolute;
+                left: 100px;
+
+                .title {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .via {
+            line-height: 15px;
+            float: right;
+        }
+    }
+
+    .stat {
+        float: left;
+        width: @inner-width / 3.25;
+
+        .value {
+            color: #555;
+            font-weight: bold;
+            font-size: 44px;
+            letter-spacing: -.05em;
+        }
+
+        .metric {
+            border-bottom: 1px dotted #aaa;
+        }
+
+        .map {
+            float: left;
+            height: 90px;
+            width: 90px;
+            margin-right: 10px;
+        }
+    }
+
+    .timeline {
+        height: 200px;
+    }
+
+    .sites {
+        li {
+            display: inline-block;
+            width: @inner-width / 3;
+            img {
+                width: 16px;
+                height: 16px;
+                margin-right: 6px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .mock { background: #ddd; }
 }
