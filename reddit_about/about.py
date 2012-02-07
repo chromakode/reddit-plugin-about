@@ -6,6 +6,8 @@ from r2.models import *
 from r2.lib.pages import Templated, BoringPage
 from r2.lib.menus import NavMenu, NavButton
 
+import random
+
 class AboutPage(BoringPage):
     css_class = 'about-page'
 
@@ -40,16 +42,7 @@ class About(Templated):
 @add_controller
 class AboutController(RedditController):
     def GET_index(self):
-        from datetime import datetime
-        quote = {
-            'body': 'reddit is a great example of a site that has become far more than simply a social-networking or link-sharing utility and has grown into a real online community that can get things done.',
-            'url': '',
-            'author': 'tester',
-            'author_url': '',
-            'sr': 'about_quotes',
-            'via': '',
-            'date': datetime.now(g.tz)
-        }
+        quote = self._get_quote()
 
         images = [
             {'src': '',
@@ -90,3 +83,18 @@ class AboutController(RedditController):
 
     def GET_guide(self):
         return AboutPage(_('new to reddit? welcome.'), _('guide')).render()
+
+    def _get_quote(self):
+        sr = Subreddit._by_name(g.about_sr_quotes)
+        ids = list(sr.get_links('hot', 'all'))
+        quote_link = Link._by_fullname(random.choice(ids))
+
+        quote = {}
+        quote['body'], quote['author'] = quote_link.title.rsplit('--', 1)
+        quote['body'] = quote['body'].strip(' "')
+        quote['author_url'] = getattr(quote_link, 'author_url', None)
+        quote['url'] = quote_link.url
+        quote['date'] = quote_link._date
+        quote['via'] = Account._byID(quote_link.author_id).name
+        quote['sr'] = g.about_sr_quotes
+        return quote
