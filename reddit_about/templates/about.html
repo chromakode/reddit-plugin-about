@@ -31,6 +31,7 @@
 </div>
 <div class="slideshow">
   <div class="image mock">
+    <img alt="${thing.images[0]['title']}" src="${thing.images[0]['src']}" />
   </div>
   <div class="info">
     <span class="controls">
@@ -44,12 +45,14 @@
       &#32;<a class="author" href="${thing.images[0]['author_url']}">${thing.images[0]['author']}</a>
     </span>
     <span class="via">
-      via
-      %if thing.images[0]['via']:
-        &#32;<a class="user" href="/user/${thing.images[0]['via']}">${thing.images[0]['via']}</a>
-        &#32;from
-      %endif
-      &#32;<a class="sr" href="/r/${thing.images[0]['sr']}">/r/${thing.images[0]['sr']}</a>
+      ${text_with_links(_('submitted by %(user)s'),
+          user=dict(
+            link_text=thing.images[0]['via'],
+            path=thing.images[0]['via_url'],
+            _class='user'
+          )
+      )}
+      <a class="${thing.images[0]['comment_class']}" href="${thing.images[0]['permalink']}">${thing.images[0]['comment_label']}</a>
     </span>
   </div>
 </div>

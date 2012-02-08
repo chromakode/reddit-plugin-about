@@ -46,16 +46,7 @@ class About(Templated):
 class AboutController(RedditController):
     def GET_index(self):
         quote = self._get_quote()
-
-        images = [
-            {'src': '',
-             'title': 'test slideshow image',
-             'url': '',
-             'author': 'tester',
-             'author_url': '',
-             'sr': 'about_images',
-             'via': 'tester'}
-        ]
+        images = self._get_images()
 
         stats = {
             'active_communities': 3043,
@@ -129,3 +120,32 @@ class AboutController(RedditController):
         quote['comment_label'], quote['comment_class'] = comment_label(quote_link.num_comments)
         quote['permalink'] = quote_link.permalink
         return quote
+
+    image_title_re = re.compile(r'''
+        ^
+        (?P<title>[^[]+?)\s*                # photo title
+        \s*(?:\[by\s*(?P<author>[^\]]+)\])  # [by author]
+        \s*(?:\[via\s*(?P<via>[^\]]+)\])?   # [via username] *optional*
+        $
+    ''', re.VERBOSE)
+
+    def _get_images(self):
+        sr = Subreddit._by_name(g.about_sr_images)
+        ids = list(sr.get_links('hot', 'all'))
+        builder = IDBuilder(ids, skip=True,
+                            keep_fn = lambda x: self.image_title_re.match(x.title)
+                                                and x.score >= g.about_images_min_score,
+                            num=g.about_images_count)
+        image_links = builder.get_items()[0]
+        images = []
+        for image_link in image_links:
+            image = self.image_title_re.match(image_link.title).groupdict()
+            image['src'] = image_link.slideshow_src
+            image['url'] = image_link.url
+            image['author_url'] = getattr(image_link, 'author_url', image['url'])
+            image['via'] = image['via'] or image_link.author.name
+            image['via_url'] = '/user/' + image['via']
+            image['comment_label'], image['comment_class'] = comment_label(image_link.num_comments)
+            image['permalink'] = image_link.permalink
+            images.append(image)
+        return images
