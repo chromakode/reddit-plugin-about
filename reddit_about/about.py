@@ -7,7 +7,9 @@ from r2.lib.pages import Templated, BoringPage
 from r2.lib.menus import NavMenu, NavButton
 from r2.lib.template_helpers import comment_label
 
+import re
 import random
+from datetime import datetime
 
 class AboutPage(BoringPage):
     css_class = 'about-page'
@@ -85,18 +87,45 @@ class AboutController(RedditController):
     def GET_guide(self):
         return AboutPage(_('new to reddit? welcome.'), _('guide')).render()
 
+    def _parse_title_date(self, date_str):
+        if not date_str:
+            return None
+
+        parsed_date = None
+        try:
+            parsed_date = datetime.strptime(date_str, '%m/%d/%y')
+        except ValueError:
+            pass
+        else:
+            # Fudge timezone to g.tz
+            parsed_date = parsed_date.replace(tzinfo=g.tz)
+
+        return parsed_date
+
+    quote_title_re = re.compile(r'''
+        ^
+        "(?P<body>[^"]+)"\s*                # "quote"
+        --\s*(?P<author>[^,[]+)             # --author
+        (?:,\s*(?P<date>\d+/\d+/\d+))?      # , mm/dd/yy *optional*
+        \s*(?:\[via\s*(?P<via>[^\]]+)\])?   # [via username] *optional*
+        $
+    ''', re.VERBOSE)
+
     def _get_quote(self):
         sr = Subreddit._by_name(g.about_sr_quotes)
         ids = list(sr.get_links('hot', 'all'))
-        quote_link = Link._by_fullname(random.choice(ids))
+        random.shuffle(ids)
+        builder = IDBuilder(ids, skip=True,
+                            keep_fn=lambda x: self.quote_title_re.match(x.title),
+                            num=1)
+        quote_link = builder.get_items()[0][0]
 
-        quote = {}
-        quote['body'], quote['author'] = quote_link.title.rsplit('--', 1)
-        quote['body'] = quote['body'].strip(' "')
+        quote = self.quote_title_re.match(quote_link.title).groupdict()
+        quote['date'] = self._parse_title_date(quote['date']) or quote_link._date
         quote['author_url'] = getattr(quote_link, 'author_url', None)
         quote['url'] = quote_link.url
-        quote['date'] = quote_link._date
-        quote['via'] = Account._byID(quote_link.author_id).name
+        quote['via'] = quote['via'] or quote_link.author.name
+        quote['via_url'] = '/user/' + quote['via']
         quote['comment_label'], quote['comment_class'] = comment_label(quote_link.num_comments)
-        quote['permalink'] = quote_link.make_permalink_slow()
+        quote['permalink'] = quote_link.permalink
         return quote

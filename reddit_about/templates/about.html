@@ -22,7 +22,7 @@
     ${text_with_links(_('submitted by %(user)s'),
         user=dict(
           link_text=thing.quote['via'],
-          path='/user/' + thing.quote['via'],
+          path=thing.quote['via_url'],
           _class='user'
         )
     )}
