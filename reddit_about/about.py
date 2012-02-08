@@ -122,8 +122,8 @@ class AboutController(RedditController):
 
         quote = self.quote_title_re.match(quote_link.title).groupdict()
         quote['date'] = self._parse_title_date(quote['date']) or quote_link._date
-        quote['author_url'] = getattr(quote_link, 'author_url', None)
         quote['url'] = quote_link.url
+        quote['author_url'] = getattr(quote_link, 'author_url', quote['url'])
         quote['via'] = quote['via'] or quote_link.author.name
         quote['via_url'] = '/user/' + quote['via']
         quote['comment_label'], quote['comment_class'] = comment_label(quote_link.num_comments)

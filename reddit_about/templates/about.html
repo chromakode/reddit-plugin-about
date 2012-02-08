@@ -16,7 +16,7 @@
 <div class="quote">
   <blockquote><a href="${thing.quote['url']}">&ldquo;${thing.quote['body']}&rdquo;</a></blockquote>
   <div class="credit">
-    &mdash;<a href="${thing.quote['author_url'] or thing.quote['url']}" class="author">${thing.quote['author']}</a>,&nbsp;${timestamp(thing.quote['date'], thing.quote['date'].strftime('%D'))}
+    &mdash;<a href="${thing.quote['author_url']}" class="author">${thing.quote['author']}</a>,&nbsp;${timestamp(thing.quote['date'], thing.quote['date'].strftime('%D'))}
   </div>
   <div class="via">
     ${text_with_links(_('submitted by %(user)s'),
