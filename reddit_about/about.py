@@ -5,6 +5,7 @@ from r2.controllers.reddit_base import RedditController
 from r2.models import *
 from r2.lib.pages import Templated, BoringPage
 from r2.lib.menus import NavMenu, NavButton
+from r2.lib.template_helpers import comment_label
 
 import random
 
@@ -96,5 +97,6 @@ class AboutController(RedditController):
         quote['url'] = quote_link.url
         quote['date'] = quote_link._date
         quote['via'] = Account._byID(quote_link.author_id).name
-        quote['sr'] = g.about_sr_quotes
+        quote['comment_label'], quote['comment_class'] = comment_label(quote_link.num_comments)
+        quote['permalink'] = quote_link.make_permalink_slow()
         return quote

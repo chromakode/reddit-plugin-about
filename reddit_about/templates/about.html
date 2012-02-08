@@ -1,7 +1,7 @@
 <%!
   import locale
 %>
-<%namespace file="utils.html" import="timestamp, format_number, _md" />
+<%namespace file="utils.html" import="timestamp, format_number, _md, text_with_links" />
 
 <div class="definition">
   <div class="info">
@@ -19,12 +19,14 @@
     &mdash;<a href="${thing.quote['author_url'] or thing.quote['url']}" class="author">${thing.quote['author']}</a>,&nbsp;${timestamp(thing.quote['date'], thing.quote['date'].strftime('%D'))}
   </div>
   <div class="via">
-    via
-    %if thing.quote['via']:
-      &#32;<a class="user" href="/user/${thing.quote['via']}">${thing.quote['via']}</a>
-      &#32;from
-    %endif
-    &#32;<a class="sr" href="/r/${thing.quote['sr']}">/r/${thing.quote['sr']}</a>
+    ${text_with_links(_('submitted by %(user)s'),
+        user=dict(
+          link_text=thing.quote['via'],
+          path='/user/' + thing.quote['via'],
+          _class='user'
+        )
+    )}
+    <a class="${thing.quote['comment_class']}" href="${thing.quote['permalink']}">${thing.quote['comment_label']}</a>
   </div>
 </div>
 <div class="slideshow">
