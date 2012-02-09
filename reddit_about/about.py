@@ -6,7 +6,6 @@ from r2.lib.pages import *
 from r2.lib.menus import NavMenu, NavButton
 
 class AboutPage(BoringPage):
-    additional_css = "about/about.css"
     css_class = "about-page"
 
     def __init__(self, title_msg=None, pagename=None, **kw):
