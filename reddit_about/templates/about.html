@@ -1,5 +1,6 @@
 <%!
   import locale
+  import json
 %>
 <%namespace file="utils.html" import="timestamp, format_number, _md, text_with_links" />
 
@@ -29,15 +30,15 @@
     <a class="${thing.quote['comment_class']}" href="${thing.quote['permalink']}">${thing.quote['comment_label']}</a>
   </div>
 </div>
-<div class="slideshow">
-  <div class="image mock">
-    <img alt="${thing.images[0]['title']}" src="${thing.images[0]['src']}" />
+<div id="slideshow">
+  <div class="image">
+    <img class="current" src="${thing.images[0]['src']}" alt="${thing.images[0]['title']}" />
   </div>
   <div class="info">
     <span class="controls">
-      <button>&lsaquo;</button>
-      <span class="count">1 / ${len(thing.images)}</span>
-      <button>&rsaquo;</button>
+      <button class="prev">&lsaquo;</button>
+      <span class="count"><span class="current">1</span>&#32;/&#32;<span class="total">${len(thing.images)}</span></span>
+      <button class="next">&rsaquo;</button>
     </span>
     <span class="description">
       <a class="title" href="${thing.images[0]['url']}">${thing.images[0]['title']}</a>
@@ -91,3 +92,7 @@
     <li><a href="${site['url']}"><img src="${site["icon"]}" alt="${site['name']} icon" /> ${site['name']}</a></li>
   %endfor
 </ul>
+
+<script>
+  slideshowImages.reset(${unsafe(json.dumps(thing.images))})
+</script>

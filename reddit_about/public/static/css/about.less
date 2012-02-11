@@ -3,6 +3,13 @@
 @accentblue: #5f99cf;
 @accentblue-hover: lighten(desaturate(@accentblue, 7%), 30%);
 
+.transition (@property, @duration, @function, @delay: 0s) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -o-transition: @arguments;
+    transition: @arguments;
+}
+
 .about-page {
     @page-width: 950px;
     width: @page-width;
@@ -124,7 +131,7 @@
         }
     }
 
-    .quote, .slideshow {
+    .quote, #slideshow {
         .via, .via a {
             font-size: 12px;
             color: lighten(@uitext, 20%);
@@ -187,13 +194,28 @@
         }
     }
 
-    .slideshow {
+    #slideshow {
         margin-top: 20px;
         color: #555;
 
         .image {
+            position: relative;
             width: @page-width;
             height: 300px;
+
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                z-index: 1;
+                .transition(opacity, .5s, linear);
+
+                &.current {
+                    opacity: 1;
+                    z-index: 2;
+                }
+            }
         }
 
         .controls, .controls button {

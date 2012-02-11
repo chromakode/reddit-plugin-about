@@ -9,4 +9,6 @@
 <%def name="javascript()">
   ${less_js()}
   ${parent.javascript()}
+  <% from r2.lib import js %>
+  ${unsafe(js.use('about'))}
 </%def>

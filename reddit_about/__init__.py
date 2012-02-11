@@ -14,7 +14,14 @@ class About(Plugin):
     }
 
     js = {
-        'less': Module('lib/less-1.2.1.min.js', should_compile=False)
+        'less': Module('lib/less-1.2.1.min.js', should_compile=False),
+
+        'about': Module('about.js',
+            'lib/underscore-1.3.1.js',
+            'lib/backbone-0.9.1.js',
+            'slideshow.js',
+            'about.js'
+        )
     }
 
     def add_routes(self, mc):
