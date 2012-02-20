@@ -11,6 +11,9 @@ import re
 import random
 from datetime import datetime
 
+def localdate(*args):
+    return datetime(*args, tzinfo=g.tz)
+
 class AboutPage(BoringPage):
     css_class = 'about-page'
 
@@ -35,11 +38,12 @@ class AboutTitle(Templated):
         self.message = message
 
 class About(Templated):
-    def __init__(self, quote, images, stats, sites):
+    def __init__(self, quote, images, stats, events, sites):
         Templated.__init__(self)
         self.quote = quote
         self.images = images
         self.stats = stats
+        self.events = events
         self.sites = sites
 
 @add_controller
@@ -55,6 +59,24 @@ class AboutController(RedditController):
             'country_map': '',
         }
 
+        events = [
+            {'date': localdate(2005, 6, 23), 'class': 'org important', 'title': 'reddit goes live', 'url': 'http://www.flickr.com/photos/33809408@N00/315068778/'},
+            {'date': localdate(2007, 4, 1), 'class': 'culture aprilfools', 'title': 'reddit censors the front page', 'url': 'http://blog.reddit.com/2007/04/reddit-now-doubleplusgood.html'},
+            {'date': localdate(2007, 11, 26), 'class': 'culture important', 'title': 'Mr. Splashy Pants', 'url': 'http://www.reddit.com/comments/61gqb/greenpeace_are_having_a_vote_to_name_a_whale_they'},
+            {'date': localdate(2008, 3, 12), 'class': 'org important', 'title': 'subreddits launched', 'url': 'http://blog.reddit.com/2008/03/make-your-own-reddit.html'},
+            {'date': localdate(2008, 4, 1), 'class': 'culture aprilfools', 'title': 'karma exchange marketplace opens', 'url': 'http://blog.reddit.com/2008/04/put-those-dollars-into-something-safe.html'},
+            {'date': localdate(2008, 6, 17), 'class': 'org important', 'title': 'reddit goes open source', 'url': 'http://blog.reddit.com/2008/06/reddit-goes-open-source.html'},
+            {'date': localdate(2008, 9, 9), 'class': 'culture important', 'title': 'crowbar shipped to CERN', 'url': 'http://blog.reddit.com/2008/09/crowbar-headcrab-and-half-life-strategy.html'},
+            {'date': localdate(2009, 11, 10), 'class': 'org important', 'title': 'move to the cloud', 'url': 'http://blog.reddit.com/2009/11/moving-to-cloud.html'},
+            {'date': localdate(2009, 4, 1), 'class': 'culture aprilfools', 'title': 'long overdue styling update', 'url': 'http://blog.reddit.com/2009/04/long-overdue-update.html'},
+            {'date': localdate(2009, 8, 24), 'class': 'culture', 'title': 'reddit\'s fantastic voyage', 'url': 'http://blog.reddit.com/2009/08/reddits-fatastic-voyage-reddit.html'},
+            {'date': localdate(2009, 9, 9), 'class': 'org important', 'title': 'self serve advertising opens', 'url': 'http://blog.reddit.com/2009/12/self-serve-advertising-on-reddit-is-now.html'},
+            {'date': localdate(2010, 4, 1), 'class': 'culture aprilfools important', 'title': 'everyone is an admin', 'url': 'http://www.reddit.com/r/reddit.com/comments/bkzbt/everyone_is_fucked_we_are_all_admin/'},
+            {'date': localdate(2010, 7, 26), 'class': 'org important', 'title': 'reddit gold released', 'url': 'http://blog.reddit.com/2010/07/reddit-needs-help.html'},
+            {'date': localdate(2011, 4, 1), 'class': 'culture aprilfools important', 'title': 'reddit mold', 'url': 'http://blog.reddit.com/2011/04/mold-mph-mmmph-mph.html'},
+            {'date': localdate(2011, 10, 18), 'class': 'org important', 'title': '/r/reddit.com archived', 'url': 'http://blog.reddit.com/2011/10/saying-goodbye-to-old-friend-and.html'},
+        ]
+
         sites = [
             {'name': 'redditgifts', 'url': 'http://redditgifts.com', 'icon': 'http://redditgifts.com/favicon.ico'},
             {'name': 'reddit.tv', 'url': 'http://reddit.tv', 'icon': 'http://reddit.tv/favicon.ico'},
@@ -62,7 +84,7 @@ class AboutController(RedditController):
             {'name': 'redditlist', 'url': 'http://redditlist.com', 'icon': 'http://redditlist.com/favicon.ico'},
         ]
 
-        content = About(quote, images, stats, sites)
+        content = About(quote, images, stats, events, sites)
         return AboutPage(_('we power awesome communities.'), _('about reddit'), content).render()
 
     def GET_team(self):

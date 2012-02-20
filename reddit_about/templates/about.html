@@ -84,7 +84,18 @@
   </div>
 </div>
 <h2>${_('history')}</h2>
-<div class="timeline mock">
+<div id="history" class="inner">
+  <span class="bglabel org">org</span>
+  <span class="bglabel culture">culture</span>
+  <ol class="events">
+    %for event in thing.events:
+      <li class="event ${event['class']}">
+        <a class="event-content" href="${event['url']}">
+          ${timestamp(event['date'], event['date'].strftime('%D'))}&#32;<span class="title">${event['title']}</span>
+        </a>
+      </li>
+    %endfor
+  </ol>
 </div>
 <h2>${_('brothers & sisters')}</h2>
 <ul class="sites inner">

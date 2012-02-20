@@ -20,6 +20,7 @@ class About(Plugin):
             'lib/underscore-1.3.1.js',
             'lib/backbone-0.9.1.js',
             'slideshow.js',
+            'timeline.js',
             'about.js'
         )
     }

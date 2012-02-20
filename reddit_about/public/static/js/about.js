@@ -22,9 +22,25 @@ AboutSlideshowView = SlideshowView.extend({
     }
 })
 
+AboutTimelineView = TimelineView.extend({
+    rowHeight: 30,
+
+    filter: function(model) {
+        return ~model.get('class').indexOf('important')
+    },
+
+    filterTop: function(model) {
+        return ~model.get('class').indexOf('org')
+    },
+})
+
 $(function() {
     var slideshow = new AboutSlideshowView({
         el: $('.about-page #slideshow'),
         collection: slideshowImages
     }).play()
+
+    var timeline = new AboutTimelineView({
+        el: $('.about-page #history .events')
+    }).render()
 })
