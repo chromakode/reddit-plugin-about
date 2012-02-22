@@ -17,8 +17,9 @@ def localdate(*args):
 class AboutPage(BoringPage):
     css_class = 'about-page'
 
-    def __init__(self, title_msg=None, pagename=None, content=None, **kw):
+    def __init__(self, content_id=None, title_msg=None, pagename=None, content=None, **kw):
         BoringPage.__init__(self, pagename or _('about reddit'), show_sidebar=False, content=content, **kw)
+        self.content_id = content_id
         self.title_msg = title_msg
 
     def content(self):
@@ -85,20 +86,20 @@ class AboutController(RedditController):
         ]
 
         content = About(quote, images, stats, events, sites)
-        return AboutPage(_('we power awesome communities.'), _('about reddit'), content).render()
+        return AboutPage('about-main', _('we power awesome communities.'), _('about reddit'), content).render()
 
     def GET_team(self):
-        return AboutPage(_('we spend our days building reddit.'), _('about the reddit team')).render()
+        return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team')).render()
 
     def GET_postcards(self):
         postcard_count = 6000
-        return AboutPage(_('you\'ve sent us over %s postcards.' % postcard_count), _('postcards')).render()
+        return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.' % postcard_count), _('postcards')).render()
 
     def GET_media(self):
-        return AboutPage(_('I also do birthday parties.'), _('media')).render()
+        return AboutPage('about-media', _('I also do birthday parties.'), _('media')).render()
 
     def GET_guide(self):
-        return AboutPage(_('new to reddit? welcome.'), _('guide')).render()
+        return AboutPage('about-guide', _('new to reddit? welcome.'), _('guide')).render()
 
     def _parse_title_date(self, date_str):
         if not date_str:

@@ -11,8 +11,10 @@
     transition: @arguments;
 }
 
+@page-width: 950px;
+@inner-offset: 5px;
+@inner-width: @page-width - 2*@inner-offset;
 .about-page {
-    @page-width: 950px;
     width: @page-width;
     margin: 30px auto;
 
@@ -21,8 +23,6 @@
         font-size:15px;
     }
 
-    @inner-offset: 5px;
-    @inner-width: @page-width - 2*@inner-offset;
     .inner {
         margin: 0 @inner-offset;
     }
@@ -103,6 +103,10 @@
         }
     }
 
+    .mock { background: #ddd; }
+}
+
+#about-main {
     .via a:hover, .author:hover {
         text-decoration: underline;
     }
@@ -455,6 +459,4 @@
             }
         }
     }
-
-    .mock { background: #ddd; }
 }
