@@ -21,7 +21,8 @@ class About(Plugin):
             'lib/backbone-0.9.1.js',
             'slideshow.js',
             'timeline.js',
-            'about.js'
+            'about.js',
+            'about-main.js',
         )
     }
 
