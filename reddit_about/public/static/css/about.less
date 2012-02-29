@@ -60,6 +60,10 @@
         padding-top: 30px;
         margin-bottom: 16px;
         clear: both;
+
+        &.centered {
+            text-align: center;
+        }
     }
 
     .about-menu {
@@ -456,6 +460,72 @@
                 height: 16px;
                 margin-right: 6px;
                 vertical-align: middle;
+            }
+        }
+    }
+}
+
+#about-team {
+    .sort-menu {
+        padding: 5px 0;
+        border-bottom: 1px dotted gray;
+    }
+
+    .people-grid {
+        position: relative;
+        margin-top: 20px;
+        .person {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: @inner-width / 4;
+            height: 160px;
+            padding-bottom: 50px;
+            .transition(all, .5s, ease);
+
+            .avatar {
+                position: relative;
+                z-index: 2;
+                width: 160px;
+                height: 160px;
+                cursor: pointer;
+            }
+
+            .name {
+                position: absolute;
+                top: 0;
+                padding-top: 166px;
+                width: @inner-width / 4;
+                font-size: 17px;
+                background: url(../about/avatar_shadow.png) center 151px no-repeat;
+                z-index: 1;
+            }
+
+            &.novalue {
+                opacity: .25;
+            }
+
+            &:hover .name {
+                background: url(../about/avatar_hover.png) center 17px no-repeat;
+            }
+        }
+
+        /* Some of the avatars require manual centering. */
+        &#team-grid .person {
+            &.alienth .avatar {
+                margin-left: 32px;
+            }
+
+            &.jenakalif .avatar {
+                margin-left: -42px;
+            }
+
+            &.kemitche .avatar {
+                margin-left: -32px;
+            }
+
+            &.hueypriest .avatar {
+                margin-left: 12px;
             }
         }
     }

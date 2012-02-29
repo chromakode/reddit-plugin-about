@@ -47,6 +47,15 @@ class About(Templated):
         self.events = events
         self.sites = sites
 
+class Team(Templated):
+    def __init__(self, team, alumni, sorts):
+        Templated.__init__(self)
+        self.team = team
+        self.alumni = alumni
+        self.sorts = sorts
+        sort_buttons = [NavButton(sort['title'], '#sort/'+sort['id'], css_class='choice-'+sort['id']) for sort in sorts]
+        self.sort_menu = NavMenu(sort_buttons, title=_('sorted by'), base_path=request.path, type='lightdrop', default='#sort/random')
+
 @add_controller
 class AboutController(RedditController):
     def GET_index(self):
@@ -89,7 +98,47 @@ class AboutController(RedditController):
         return AboutPage('about-main', _('we power awesome communities.'), _('about reddit'), content).render()
 
     def GET_team(self):
-        return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team')).render()
+        sorts = (
+             {'id': 'random', 'title': _('random'), 'dir': 1},
+             {'id': 'new', 'title': _('new'), 'dir': 1},
+             {'id': 'hot', 'title': _('hot'), 'dir': -1},
+             {'id': 'top', 'title': _('top'), 'dir': -1},
+             {'id': 'beard', 'title': _('beard'), 'dir': -1},
+             {'id': 'pyro', 'title': _('pyromania'), 'dir': -1},
+             {'id': 'arnold', 'title': _('love of arnold schwarzenegger'), 'dir': -1},
+             {'id': 'spy', 'title': _('most likely to be a spy'), 'dir': -1}
+        )
+
+        team = [
+             {'name': 'alienth', 'new': 12, 'top': 1.83, 'beard': 8, 'pyro': 10},
+             {'name': 'bitcrunch', 'top': 1.55},
+             {'name': 'bsimpson', 'top': 1.75, 'arnold': 9999},
+             {'name': 'chromakode', 'new': 13, 'top': 1.68, 'beard': 5, 'spy': 9999},
+             {'name': 'cupcake1713', 'top': 1.63},
+             {'name': 'hueypriest', 'new': 10, 'top': 1.83, 'beard': 10},
+             {'name': 'intortus', 'top': 1.83, 'beard': 5},
+             {'name': 'jenakalif', 'top': 1.73},
+             {'name': 'kemitche', 'top': 1.82, 'beard': 6},
+             {'name': 'kirbyrules', 'top': 1.65},
+             {'name': 'krispykrackers', 'top': 1.52},
+             {'name': 'pixelinaa', 'top': 1.70},
+             {'name': 'powerlanguage', 'top': 1.82},
+             {'name': 'rram', 'top': 1.65, 'beard': 3, 'pyro': 10},
+             {'name': 'spladug', 'top': 1.72, 'new': 11, 'beard': 10, 'pyro': 5},
+             {'name': 'yishan'},
+        ]
+
+        alumni = [
+             {'name': 'spez', 'new': 0},
+             {'name': 'kn0thing', 'new': 0},
+             {'name': 'jedberg', 'new': 2},
+             {'name': 'KeyserSosa', 'new': 1},
+             {'name': 'ketralnis', 'new': 3},
+             {'name': 'raldi', 'new': 4},
+        ]
+
+        content = Team(team, alumni, sorts)
+        return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team'), content).render()
 
     def GET_postcards(self):
         postcard_count = 6000
