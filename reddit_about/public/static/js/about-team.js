@@ -89,6 +89,8 @@ r.about.pages['about-team'] = function() {
         attribute: 'sort'
     })
 
+    new scrollFixed($('#about-team .sort-menu'))
+
     var teamGrid = new PeopleGridView({
         el: $('#team-grid'),
         collection: team

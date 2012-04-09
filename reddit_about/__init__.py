@@ -19,6 +19,7 @@ class About(Plugin):
         'about': Module('about.js',
             'lib/underscore-1.3.1.js',
             'lib/backbone-0.9.1.js',
+            'utils.js',
             'slideshow.js',
             'timeline.js',
             'grid.js',
