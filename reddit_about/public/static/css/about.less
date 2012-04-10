@@ -552,12 +552,15 @@
             }
 
             .username {
+                @spacing: 40px;
                 position: absolute;
                 top: 0;
+                left: @spacing / 2;
                 padding-top: 166px;
-                width: @inner-width / 4;
+                width: @inner-width / 4 - @spacing;
                 font-size: 17px;
                 background: url(../about/avatar_shadow.png) center 151px no-repeat;
+                cursor: pointer;
                 z-index: 1;
             }
 
