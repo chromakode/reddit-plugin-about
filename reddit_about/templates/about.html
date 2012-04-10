@@ -90,7 +90,7 @@
   <ol class="events">
     %for event in thing.events:
       <li class="event ${event['class']}">
-        <a class="event-content" href="${event['url']}">
+        <a class="event-content" href="${event['url']}" target="_blank">
           ${timestamp(event['date'], event['date'].strftime('%D'))}&#32;<span class="title">${event['title']}</span>
         </a>
       </li>
