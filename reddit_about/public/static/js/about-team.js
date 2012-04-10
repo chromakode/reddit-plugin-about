@@ -40,7 +40,8 @@ DropdownView = Backbone.View.extend({
 })
 
 TeamMember = Backbone.Model.extend({
-    idAttribute: 'name',
+    idAttribute: 'username',
+
     initialize: function() {
         this.set('random', Math.random())
     }
@@ -66,16 +67,99 @@ SortableCollection = Backbone.Collection.extend({
     }
 })
 
+PersonDetailsPopup = Backbone.View.extend({
+    id: 'person-overlay',
+    events: {
+        'click .close': 'hide'
+    },
+
+    template: _.template(
+         '<button class="close">x</button><div class="top"><strong class="name"><%= data.name %></strong> <em class="role"><%= data.role %></em></div>'
+        +'<p class="description"><%= data.description %></p>'
+        +'<div class="etc"><a href="http://www.reddit.com/user/<%= data.username %>" target="_blank">reddit.com/user/<%= data.username %></a></div>',
+        null, {variable: 'data'}
+    ),
+
+    render: function() {
+        this.$el.empty().append(this.template(this.model.toJSON()))
+    },
+
+    show: function(model, view) {
+        this.hide()
+        this.targetView = view
+        this.model = model
+
+        this.render()
+
+        var avatar = this.targetView.$('.avatar'),
+            personPos = avatar.offset(),
+            leftSide = personPos.left < this.$el.parent().width() / 2
+
+        this.$el
+            .css({
+                top: personPos.top,
+                left: personPos.left + (leftSide ? avatar.outerWidth(true) : -this.$el.width())
+            })
+            .removeClass('left right')
+            .addClass(leftSide ? 'left' : 'right')
+            .show()
+
+        this.targetView.$el.addClass('focused')
+        this.trigger('show')
+    },
+
+    hide: function() {
+        if (this.targetView) {
+            this.targetView.$el.removeClass('focused')
+        }
+        this.$el.hide()
+        this.trigger('hide')
+        this.model = null
+        this.targetView = null
+    },
+
+    toggle: function(model, view) {
+        if (this.model == model) {
+            this.hide()
+        } else {
+            this.show(model, view)
+        }
+    }
+})
+
 PersonView = Backbone.View.extend({
+    events: {
+        'click': 'showInfo'
+    },
+
+    showInfo: function() {
+        this.options.popup.toggle(this.model, this)
+    }
 })
 
 PeopleGridView = GridView.extend({
+    initialize: function() {
+        GridView.prototype.initialize.apply(this)
+        this.collection.on('reset', this.options.popup.hide, this.options.popup)
+        this.options.popup.on('show', this.focus, this)
+        this.options.popup.on('hide', this.unfocus, this)
+    },
+
     createItemView: function(model) {
         return new PersonView({
             el: this.$('.'+model.id),
-            model: model
+            model: model,
+            popup: this.options.popup
         })
-    }
+    },
+
+    focus: function() {
+        this.$el.addClass('focusing')
+    },
+
+    unfocus: function() {
+        this.$el.removeClass('focusing')
+    },
 })
 
 teamSorts = new Backbone.Collection
@@ -91,14 +175,19 @@ r.about.pages['about-team'] = function() {
 
     new scrollFixed($('#about-team .sort-menu'))
 
+    var personPopup = new PersonDetailsPopup()
+    $('#about-team').append(personPopup.el)
+
     var teamGrid = new PeopleGridView({
         el: $('#team-grid'),
-        collection: team
+        collection: team,
+        popup: personPopup
     })
 
     var alumniGrid = new PeopleGridView({
         el: $('#alumni-grid'),
-        collection: alumni
+        collection: alumni,
+        popup: personPopup
     })
 
     var sortRouter = new SortRouter({collection: team})

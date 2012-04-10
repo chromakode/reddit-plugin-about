@@ -11,6 +11,49 @@
     transition: @arguments;
 }
 
+.arrow (@_, @size, @width, @border-color, @offset: 0, @bg-color: white) {
+    &:before, &:after {
+        position: absolute;
+        display: block;
+        content: '';
+        border: @size solid;
+        border-style: solid solid outset; /* mitigates firefox drawing a thicker arrow */
+    }
+
+    &:before {
+        border-color: transparent;
+        top: @offset;
+    }
+
+    &:after {
+        border-color: transparent;
+        top: @offset;
+    }
+}
+.arrow (left, @size, @width, @border-color, @offset: 0, @bg-color: white) {
+    &:before {
+        border-right-color: @border-color;
+        left: -2 * @size - @width;
+    }
+
+    &:after {
+        border-right-color: @bg-color;
+        left: -2 * @size + 1;
+    }
+}
+
+.arrow (right, @size, @width, @border-color, @offset: 0, @bg-color: white) {
+    &:before {
+        border-left-color: @border-color;
+        right: -2 * @size - @width;
+    }
+
+    &:after {
+        border-left-color: @bg-color;
+        right: -2 * @size + 1;
+    }
+}
+
 @page-width: 950px;
 @inner-offset: 5px;
 @inner-width: @page-width - 2*@inner-offset;
@@ -477,6 +520,11 @@
     .people-grid {
         position: relative;
         margin-top: 20px;
+
+        &.focusing .person {
+            opacity: .65;
+        }
+
         .person {
             position: relative;
             display: inline-block;
@@ -494,7 +542,7 @@
                 cursor: pointer;
             }
 
-            .name {
+            .username {
                 position: absolute;
                 top: 0;
                 padding-top: 166px;
@@ -508,7 +556,11 @@
                 opacity: .25;
             }
 
-            &:hover .name {
+            &.focused {
+                opacity: 1;
+            }
+
+            &:hover .username, &.focused .username {
                 background: url(../about/avatar_hover.png) center 17px no-repeat;
             }
         }
@@ -516,20 +568,98 @@
         /* Some of the avatars require manual centering. */
         &#team-grid .person {
             &.alienth .avatar {
-                margin-left: 32px;
+                left: 17px;
             }
 
             &.jenakalif .avatar {
-                margin-left: -42px;
+                left: -21px;
             }
 
             &.kemitche .avatar {
-                margin-left: -32px;
+                left: -17px;
             }
 
             &.hueypriest .avatar {
-                margin-left: 12px;
+                left: 6px;
             }
+        }
+    }
+
+    #person-overlay {
+        @border-color: #979797;
+        @arrow-size: 16px;
+        @spacing: 10px;
+
+        position: absolute;
+        display: none;
+        background: white;
+        border: 2px solid @border-color;
+        width: 400px;
+        margin-top: 24px;
+        box-shadow: 0 2px 20px rgba(0,0,0,.2);
+        z-index: 9;
+
+        &.left {
+            .arrow(left, @arrow-size, 2px, @border-color, 12px);
+            margin-left: @arrow-size + @spacing;
+        }
+        &.right {
+            .arrow(right, @arrow-size, 2px, @border-color, 12px);
+            margin-left: -@arrow-size - @spacing;
+        }
+
+        div, p {
+            padding: 10px 30px;
+        }
+
+        .close {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 13px;
+            height: 13px;
+            padding: 28px 36px;
+            text-indent: -9999px;
+            border: none;
+            background: url('../about/close.png') center center no-repeat;
+            opacity: .5;
+
+            &:hover {
+                opacity: .75;
+            }
+
+            &:active {
+                margin-top: 1px;
+            }
+        }
+
+        .top {
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .etc {
+            padding-bottom: 15px;
+        }
+
+        .name {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: -.05em;
+        }
+
+        .role {
+            color: gray;
+            font-weight: bold;
+            margin-left: .5em;
+        }
+
+        .description {
+            background:  #e7f3ff;
+        }
+
+        a {
+            text-decoration: underline;
         }
     }
 }

@@ -110,31 +110,31 @@ class AboutController(RedditController):
         )
 
         team = [
-             {'name': 'alienth', 'new': 12, 'top': 1.83, 'beard': 8, 'pyro': 10},
-             {'name': 'bitcrunch', 'top': 1.55},
-             {'name': 'bsimpson', 'top': 1.75, 'arnold': 9999},
-             {'name': 'chromakode', 'new': 13, 'top': 1.68, 'beard': 5, 'spy': 9999},
-             {'name': 'cupcake1713', 'top': 1.63},
-             {'name': 'hueypriest', 'new': 10, 'top': 1.83, 'beard': 10},
-             {'name': 'intortus', 'top': 1.83, 'beard': 5},
-             {'name': 'jenakalif', 'top': 1.73},
-             {'name': 'kemitche', 'top': 1.82, 'beard': 6},
-             {'name': 'kirbyrules', 'top': 1.65},
-             {'name': 'krispykrackers', 'top': 1.52},
-             {'name': 'pixelinaa', 'top': 1.70},
-             {'name': 'powerlanguage', 'top': 1.82},
-             {'name': 'rram', 'top': 1.65, 'beard': 3, 'pyro': 10},
-             {'name': 'spladug', 'top': 1.72, 'new': 11, 'beard': 10, 'pyro': 5},
-             {'name': 'yishan'},
+             {'username': 'alienth', 'new': 12, 'top': 1.83, 'beard': 8, 'pyro': 10},
+             {'username': 'bitcrunch', 'top': 1.55},
+             {'username': 'bsimpson', 'top': 1.75, 'arnold': 9999},
+             {'username': 'chromakode', 'new': 13, 'top': 1.68, 'beard': 5, 'spy': 9999},
+             {'username': 'cupcake1713', 'top': 1.63},
+             {'username': 'hueypriest', 'name':'Erik Martin', 'role':'General Manager', 'description':'Erik is our general manager and nerd herder. He has an awesome dog named Mog who can often be found around the office.', 'new': 10, 'top': 1.83, 'beard': 10},
+             {'username': 'intortus', 'top': 1.83, 'beard': 5},
+             {'username': 'jenakalif', 'top': 1.73},
+             {'username': 'kemitche', 'top': 1.82, 'beard': 6},
+             {'username': 'kirbyrules', 'top': 1.65},
+             {'username': 'krispykrackers', 'top': 1.52},
+             {'username': 'pixelinaa', 'top': 1.70},
+             {'username': 'powerlanguage', 'top': 1.82},
+             {'username': 'rram', 'top': 1.65, 'beard': 3, 'pyro': 10},
+             {'username': 'spladug', 'top': 1.72, 'new': 11, 'beard': 10, 'pyro': 5},
+             {'username': 'yishan'},
         ]
 
         alumni = [
-             {'name': 'spez', 'new': 0},
-             {'name': 'kn0thing', 'new': 0},
-             {'name': 'jedberg', 'new': 2},
-             {'name': 'KeyserSosa', 'new': 1},
-             {'name': 'ketralnis', 'new': 3},
-             {'name': 'raldi', 'new': 4},
+             {'username': 'spez', 'new': 0},
+             {'username': 'kn0thing', 'new': 0},
+             {'username': 'jedberg', 'new': 2},
+             {'username': 'KeyserSosa', 'new': 1},
+             {'username': 'ketralnis', 'new': 3},
+             {'username': 'raldi', 'new': 4},
         ]
 
         content = Team(team, alumni, sorts)
