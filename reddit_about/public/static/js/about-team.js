@@ -99,8 +99,8 @@ PersonDetailsPopup = Backbone.View.extend({
 
     show: function(model, view) {
         this.hide()
-        this.targetView = view
         this.model = model
+        this.targetView = view
 
         this.render()
 
