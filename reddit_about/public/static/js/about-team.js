@@ -80,6 +80,19 @@ PersonDetailsPopup = Backbone.View.extend({
         null, {variable: 'data'}
     ),
 
+    initialize: function() {
+        $('body').click(_.bind(function(ev) {
+            if (!this.targetView) {
+                return
+            }
+
+            var parents = $(ev.target).parents()
+            if (!parents.is(this.$el) && !parents.is(this.targetView.$el)) {
+                this.hide()
+            }
+        }, this))
+    },
+
     render: function() {
         this.$el.empty().append(this.template(this.model.toJSON()))
     },
