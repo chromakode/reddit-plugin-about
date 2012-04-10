@@ -91,19 +91,14 @@ PersonDetailsPopup = Backbone.View.extend({
                 this.hide()
             }
         }, this))
+        $(window).resize(_.bind(this.position, this))
     },
 
     render: function() {
         this.$el.empty().append(this.template(this.model.toJSON()))
     },
 
-    show: function(model, view) {
-        this.hide()
-        this.model = model
-        this.targetView = view
-
-        this.render()
-
+    position: function() {
         var avatar = this.targetView.$('.avatar'),
             personPos = avatar.offset(),
             leftSide = personPos.left < this.$el.parent().width() / 2
@@ -115,7 +110,16 @@ PersonDetailsPopup = Backbone.View.extend({
             })
             .removeClass('left right')
             .addClass(leftSide ? 'left' : 'right')
-            .show()
+    },
+
+    show: function(model, view) {
+        this.hide()
+        this.model = model
+        this.targetView = view
+
+        this.render()
+        this.position()
+        this.$el.show()
 
         this.targetView.$el.addClass('focused')
         this.trigger('show')
