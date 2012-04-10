@@ -101,7 +101,8 @@ PersonDetailsPopup = Backbone.View.extend({
     position: function() {
         var avatar = this.targetView.$('.avatar'),
             personPos = avatar.offset(),
-            leftSide = personPos.left < this.$el.parent().width() / 2
+            parent = this.$el.parent(),
+            leftSide = personPos.left < parent.offset().left + parent.width() / 2
 
         this.$el
             .css({
