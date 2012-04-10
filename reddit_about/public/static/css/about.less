@@ -463,8 +463,17 @@
 
             .event:hover {
                 opacity: 1;
+
+                &:not(.important) {
+                    z-index: 99 !important;
+                }
+
                 .event-marker {
                     opacity: 1;
+                }
+
+                .event-content {
+                    box-shadow: 5px 0 10px white;
                 }
 
                 &.org .event-marker {
@@ -484,7 +493,7 @@
 
             &.focusing {
                 .event.important .event-marker {
-                    opacity: .2;
+                    opacity: .5;
                 }
 
                 .event:hover .event-marker {
