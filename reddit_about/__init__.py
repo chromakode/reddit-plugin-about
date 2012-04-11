@@ -17,7 +17,7 @@ class About(Plugin):
         'less': Module('lib/less-1.3.0.min.js', should_compile=False),
 
         'about': Module('about.js',
-            'lib/underscore-1.3.2.js',
+            'lib/underscore-1.3.3.js',
             'lib/backbone-0.9.1.js',
             'utils.js',
             'slideshow.js',
