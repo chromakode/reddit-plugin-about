@@ -159,8 +159,9 @@ PeopleGridView = GridView.extend({
     initialize: function() {
         GridView.prototype.initialize.apply(this)
         this.collection.on('reset', this.options.popup.hide, this.options.popup)
-        this.options.popup.on('show', this.focus, this)
-        this.options.popup.on('hide', this.unfocus, this)
+        this.options.popup
+            .on('show', this.focus, this)
+            .on('hide', this.unfocus, this)
     },
 
     createItemView: function(model) {
