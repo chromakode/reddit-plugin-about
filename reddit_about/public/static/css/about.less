@@ -4,7 +4,7 @@
 @accentblue-hover: lighten(desaturate(@accentblue, 7%), 30%);
 @lightblue: #cee3f8;
 
-.transition (@property, @duration, @function, @delay: 0s) {
+.transition (@property, @duration, @function: ease, @delay: 0s) {
     -webkit-transition: @arguments;
     -moz-transition: @arguments;
     -o-transition: @arguments;
@@ -672,6 +672,112 @@
 
         a {
             text-decoration: underline;
+        }
+    }
+}
+
+#about-postcards {
+    .postcard, .zoom {
+        cursor: pointer;
+    }
+
+    #postcards {
+        position: relative;
+        margin-top: 20px;
+
+        .postcard {
+            display: inline-block;
+            padding: 7px;
+            text-align: center;
+            width: 215px;
+            height: 215px;
+            .transition(opacity, .5s, ease);
+        }
+
+        &.zoomed .postcard {
+            opacity: .65;
+        }
+    }
+
+    .postcard-zoombox {
+        z-index: 5;
+
+        .zoom {
+            position: absolute;
+            -webkit-transform: perspective(1250);
+            -webkit-transform-style: preserve-3d;
+            .transition(all, .65s);
+            z-index: 10;
+        }
+
+        .zoom .face {
+            background: white;
+            box-shadow: 0 0 20px transparent;
+            position: absolute;
+            -webkit-backface-visibility: hidden;
+            .transition(all, .65s);
+        }
+
+        &.zoomed .zoom .face {
+            box-shadow: 0 0 30px rgba(0,0,0,.5);
+        }
+
+        .zoom .front {
+        }
+
+        .zoom .back {
+            -webkit-transform: rotateY(180deg);
+        }
+
+        .back, &.flipped .front {
+            z-index: 11;
+        }
+
+        .front, &.flipped .back {
+            z-index: 12;
+        }
+
+        &.flipped .zoom {
+            -webkit-transform: perspective(1250) rotateY(180deg) translateZ(-1px);
+        }
+
+        &.rotate .zoom .back {
+            -webkit-transform: rotateZ(-90deg) rotateY(180deg);
+        }
+
+        &.rotate.flipped .zoom {
+            -webkit-transform: perspective(1250) rotateY(180deg) rotateZ(90deg) translateZ(-1px);
+        }
+
+        .cardinfo {
+            background: rgba(60,60,60,.8);
+            border-radius: 3px;
+            opacity: 0;
+            padding: 3px;
+            position: absolute;
+            text-align: center;
+            width: 85px;
+            z-index: 9;
+
+            &.show {
+                opacity: .75;
+                .transition(opacity, .5s, ease-in);
+            }
+
+            &.hide {
+                opacity: 0;
+                .transition(opacity, 0, ease-in);
+            }
+
+            &.show:hover {
+                opacity: 1;
+                .transition(opacity, .25s, ease-in);
+            }
+
+            .date {
+                color: white;
+                font: 10px sans-serif;
+            }
         }
     }
 }

@@ -25,7 +25,8 @@ class About(Plugin):
             'grid.js',
             'about.js',
             'about-main.js',
-            'about-team.js'
+            'about-team.js',
+            'about-postcards.js',
         )
     }
 

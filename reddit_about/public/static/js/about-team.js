@@ -74,10 +74,9 @@ PersonDetailsPopup = Backbone.View.extend({
     },
 
     template: _.template(
-         '<button class="close">x</button><div class="top"><strong class="name"><%= data.name %></strong> <em class="role"><%= data.role %></em></div>'
-        +'<p class="description"><%= data.description %></p>'
-        +'<div class="etc"><a href="http://www.reddit.com/user/<%= data.username %>" target="_blank">reddit.com/user/<%= data.username %></a></div>',
-        null, {variable: 'data'}
+         '<button class="close">x</button><div class="top"><strong class="name"><%= d.name %></strong> <em class="role"><%= d.role %></em></div>'
+        +'<p class="description"><%= d.description %></p>'
+        +'<div class="etc"><a href="http://www.reddit.com/user/<%= d.username %>" target="_blank">reddit.com/user/<%= d.username %></a></div>'
     ),
 
     initialize: function() {

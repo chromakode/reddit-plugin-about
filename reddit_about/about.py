@@ -56,6 +56,9 @@ class Team(Templated):
         sort_buttons = [NavButton(sort['title'], '#sort/'+sort['id'], css_class='choice-'+sort['id']) for sort in sorts]
         self.sort_menu = NavMenu(sort_buttons, title=_('sorted by'), base_path=request.path, type='lightdrop', default='#sort/random')
 
+class Postcards(Templated):
+    pass
+
 @add_controller
 class AboutController(RedditController):
     def GET_index(self):
@@ -142,7 +145,8 @@ class AboutController(RedditController):
 
     def GET_postcards(self):
         postcard_count = 6000
-        return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.' % postcard_count), _('postcards')).render()
+        content = Postcards()
+        return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.') % postcard_count, _('postcards'), content).render()
 
     def GET_media(self):
         return AboutPage('about-media', _('I also do birthday parties.'), _('media')).render()

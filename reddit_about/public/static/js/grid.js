@@ -26,24 +26,29 @@ GridView = Backbone.View.extend({
     render: function() {
         var gridWidth = this.$el.width(),
             gridHeight = 0,
-            pos = {x:0, y:0}
+            pos = {x:0, y:0},
+            sortKey = this.collection.state && this.collection.state.get('sort')
 
-        this.collection.each(function(model) {
-            var view = this.itemViews[model.cid],
-                viewWidth = view.$el.outerWidth(true)
+        _.each(this.itemViews, function(view, cid) {
+            var model = this.collection.getByCid(cid),
+                viewWidth = view.$el.outerWidth(true),
+                viewHeight = view.$el.outerHeight(true)
+
             if (pos.x + viewWidth > gridWidth) {
-                var viewHeight = view.$el.outerHeight(true)
                 pos.x = 0
                 pos.y += viewHeight
-                gridHeight = pos.y + viewHeight
             }
-            view.$el
-                .css({
-                    'position': 'absolute',
-                    'left': pos.x,
-                    'top': pos.y
-                })
-                .toggleClass('novalue', !model.has(this.collection.state.get('sort')))
+            gridHeight = pos.y + viewHeight
+
+            view.$el.css({
+                'position': 'absolute',
+                'left': pos.x,
+                'top': pos.y
+            })
+
+            if (sortKey) {
+                view.$el.toggleClass('novalue', !model.has(sortKey))
+            }
 
             pos.x += viewWidth
         }, this)
