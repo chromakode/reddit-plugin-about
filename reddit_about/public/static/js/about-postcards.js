@@ -23,7 +23,7 @@ PostcardCollection = Backbone.Collection.extend({
         if (chunkId in this.loadedChunks) {
             callback()
         } else {
-            this.fetch({chunk: chunkId, success: callback})
+            this.fetch({chunk: chunkId, add: true, success: callback})
         }
     },
 
@@ -315,21 +315,18 @@ var PostcardGridView = GridView.extend({
     },
 
     addAll: function() {
-        this.collection.chain()
-            /*.sortBy(function(p) {
-                return p.get('images').small.front.height
-            })*/
-            .first(location.hash == '#all' ? 99999 : 32)
-            .each(_.bind(this.addOne, this))
+        this.collection.each(this.addOne, this)
     },
 
     zoomById: function(cardId) {
         this.collection.ensureLoaded(cardId, _.bind(function() {
-            var postcard = this.collection.get(cardId)
-            if (postcard) {
-                // FIXME: error handling?
-                this.zoom(this.itemViews[cardId])
-            }
+            _.defer(_.bind(function() {
+                var postcardView = this.itemViews[cardId]
+                if (postcardView) {
+                    $(window).scrollTop(postcardView.$el.offset().top - $(window).height() / 2)
+                    this.zoom(postcardView)
+                }
+            }, this))
         }, this))
     },
 
@@ -341,9 +338,9 @@ var PostcardGridView = GridView.extend({
             this.trigger('zoom', postcard.model.id)
             var zoom = this.currentZoom = new PostcardZoomView({parent: postcard, zoomer: this})
             $('#about-postcards').append(zoom.render().el)
-            setTimeout(function() {
+            _.defer(function() {
                 zoom.zoom().flip()
-            }, 0)
+            })
         }
     },
 
@@ -366,7 +363,7 @@ var PostcardGridView = GridView.extend({
 
     _scroll: function() {
         if (this.currentZoom
-                && Math.abs(this.zoomScroll - $(window).scrollTop()) > 150) {
+                && Math.abs(this.zoomScroll - $(window).scrollTop()) > 800) {
             this.unzoom()
         }
     },
@@ -375,7 +372,7 @@ var PostcardGridView = GridView.extend({
 r.about.pages['about-postcards'] = function() {
     $('.abouttitle h1').hide()
 
-    var postcards = new PostcardCollection,
+    postcards = new PostcardCollection,
         grid = new PostcardGridView({
             el: $('#postcards'),
             collection: postcards
@@ -383,7 +380,9 @@ r.about.pages['about-postcards'] = function() {
 
     var cardRouter = new PostcardRouter({zoomer: grid})
     postcards.init(function() {
-        Backbone.history.start()
+        if (!Backbone.history.start()) {
+            cardRouter.navigate('browse')
+        }
         $('.abouttitle h1')
             .find('.count').text(postcards.totalCount).end()
             .fadeIn()
