@@ -1,6 +1,6 @@
 SortRouter = Backbone.Router.extend({
     routes: {
-        'sort/:sortId/': 'sort',
+        'sort/:sortId': 'sort',
     },
 
     initialize: function(options) {
@@ -85,8 +85,7 @@ PersonDetailsPopup = Backbone.View.extend({
                 return
             }
 
-            var parents = $(ev.target).parents()
-            if (!parents.is(this.$el) && !parents.is(this.targetView.$el)) {
+            if (!$(ev.target).closest($([this.el, this.targetView.el])).length) {
                 this.hide()
             }
         }, this))

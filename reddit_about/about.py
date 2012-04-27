@@ -146,7 +146,7 @@ class AboutController(RedditController):
         return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team'), content).render()
 
     def GET_postcards(self):
-        postcard_count = 6000
+        postcard_count = '&#32;<span class="count">...</span>&#32;'
         content = Postcards()
         return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.') % postcard_count, _('postcards'), content).render()
 

@@ -6,14 +6,76 @@ Postcard = Backbone.Model.extend({})
 
 PostcardCollection = Backbone.Collection.extend({
     model: Postcard,
-    url: baseURL + 'postcards.js',
+    url: baseURL + 'postcards-latest.js',
+    chunkSize: null,
+    loadedChunks: {},
+
+    init: function(callback) {
+        this.fetch({success: _.bind(function(collection, response) {
+            this.chunkSize = this.length
+            this.totalCount = response.total_postcard_count
+            callback()
+        }, this)})
+    },
+
+    ensureLoaded: function(cardId, callback) {
+        var chunkId = Math.floor(cardId / this.chunkSize)
+        if (chunkId in this.loadedChunks) {
+            callback()
+        } else {
+            this.fetch({chunk: chunkId, success: callback})
+        }
+    },
+
+    fetch: function(options) {
+        if (options && 'chunk' in options) {
+            options.url = baseURL + 'postcards' + options.chunk + '.js'
+        }
+        var success = options.success
+        options.success = function(collection, response) {
+            if (response.chunk_id) {
+                collection.loadedChunks[response.chunk_id] = true
+            }
+            if (success) { success(collection, response) }
+        }
+        Backbone.Collection.prototype.fetch.call(this, options)
+    },
+
     sync: function(method, model, options) {
         Backbone.sync(method, model, _.extend({
             dataType: 'jsonp',
             jsonp: false,
-            jsonpCallback: 'postcardsCallback',
+            jsonpCallback: 'postcardCallback' + ('chunk' in options ? options.chunk : ''),
             cache: true // FIXME
         }, options))
+    },
+
+    parse: function(response) {
+        return response.postcards
+    },
+
+    comparator: function(model) {
+        return -model.id
+    }
+})
+
+PostcardRouter = Backbone.Router.extend({
+    routes: {
+        'view/:cardId': 'viewCard',
+    },
+
+    initialize: function(options) {
+        this.zoomer = options.zoomer
+        this.zoomer.on('zoom', function(cardId) {
+            this.navigate('view/' + cardId)
+        }, this)
+        this.zoomer.on('unzoom', function(cardId) {
+            this.navigate('browse', {replace: true})
+        }, this)
+    },
+
+    viewCard: function(cardId) {
+        this.zoomer.zoomById(Number(cardId))
     }
 })
 
@@ -76,6 +138,8 @@ var PostcardInfoView = Backbone.View.extend({
             image = parent.currentImage(),
             parentPos = parent.position,
             oldTarget = this.target || {left: 0, top: 0},
+
+            // Since the parent is animating, we must calculate the final position.
             target = {
                 left: parentPos.left + (parent.maxWidth - image.width) / 2 - $(this.el).outerWidth() - 10,
                 top: parentPos.top + (parent.maxHeight - image.height) / 2
@@ -206,7 +270,6 @@ var PostcardZoomView = Backbone.View.extend({
         this.$el.one('webkitTransitionEnd', _.bind(function() {
             this.remove()
         }, this))
-        return this
     }
 })
 
@@ -219,13 +282,15 @@ var PostcardView = Backbone.View.extend({
     },
 
     render: function() {
-        var thumb = this.model.get('images').small
+        var thumb = this.model.get('images').small,
+            front = thumb.front || {}
         $(this.el).append(
-            this.make('img', {
-                src: baseURL + thumb.front.filename,
-                width: thumb.front.width,
-                height: thumb.front.height
-            }))
+            $(this.make('img', {
+                src: baseURL + front.filename,
+                width: front.width,
+                height: front.height
+            })).css('margin-top', -front.height / 2)
+        )
         return this
     },
 
@@ -254,21 +319,27 @@ var PostcardGridView = GridView.extend({
             /*.sortBy(function(p) {
                 return p.get('images').small.front.height
             })*/
-            .first(location.hash == '#all' ? 99999 : 50)
+            .first(location.hash == '#all' ? 99999 : 32)
             .each(_.bind(this.addOne, this))
+    },
+
+    zoomById: function(cardId) {
+        this.collection.ensureLoaded(cardId, _.bind(function() {
+            var postcard = this.collection.get(cardId)
+            if (postcard) {
+                // FIXME: error handling?
+                this.zoom(this.itemViews[cardId])
+            }
+        }, this))
     },
 
     zoom: function(postcard) {
         if (!this.currentZoom || postcard.model.id != this.currentZoom.model.id) {
             this.unzoom(true)
-            this.startScroll = $(window).scrollTop()
+            this.zoomScroll = $(window).scrollTop()
             this.$el.addClass('zoomed')
+            this.trigger('zoom', postcard.model.id)
             var zoom = this.currentZoom = new PostcardZoomView({parent: postcard, zoomer: this})
-            zoom.bind('unzoom', function() {
-                this.$el.removeClass('zoomed')
-                zoom.remove()
-            }, this)
-
             $('#about-postcards').append(zoom.render().el)
             setTimeout(function() {
                 zoom.zoom().flip()
@@ -279,6 +350,7 @@ var PostcardGridView = GridView.extend({
     unzoom: function(switching) {
         if (!switching) {
             this.$el.removeClass('zoomed')
+            this.trigger('unzoom')
         }
         if (this.currentZoom) {
             this.currentZoom.unzoom()
@@ -287,27 +359,33 @@ var PostcardGridView = GridView.extend({
     },
 
     _clickOut: function(ev) {
-        var parents = $(ev.target).parents()
-        if (this.currentZoom
-                && !parents.is(this.currentZoom.$el)
-                && !parents.is(this.currentZoom.options.parent.$el)) {
+        if (this.currentZoom && !$(ev.target).closest($([this.currentZoom.el, this.currentZoom.options.parent.el])).length) {
             this.unzoom()
         }
     },
 
     _scroll: function() {
         if (this.currentZoom
-                && Math.abs(this.startScroll - $(window).scrollTop()) > 150) {
+                && Math.abs(this.zoomScroll - $(window).scrollTop()) > 150) {
             this.unzoom()
         }
     },
 })
 
 r.about.pages['about-postcards'] = function() {
+    $('.abouttitle h1').hide()
+
     var postcards = new PostcardCollection,
         grid = new PostcardGridView({
             el: $('#postcards'),
             collection: postcards
         })
-    postcards.fetch()
+
+    var cardRouter = new PostcardRouter({zoomer: grid})
+    postcards.init(function() {
+        Backbone.history.start()
+        $('.abouttitle h1')
+            .find('.count').text(postcards.totalCount).end()
+            .fadeIn()
+    })
 }

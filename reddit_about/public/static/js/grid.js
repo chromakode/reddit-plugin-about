@@ -4,6 +4,7 @@ GridView = Backbone.View.extend({
 
     itemViews: {},
     initialize: function() {
+        this.collection.on('add', this.addOne, this)
         this.collection.on('reset', this.addAll, this)
         this.collection.on('all', this.render, this)
     },
@@ -13,9 +14,9 @@ GridView = Backbone.View.extend({
     },
 
     addOne: function(model) {
-        if (!this.itemViews[model.cid]) {
+        if (!this.itemViews[model.id]) {
             var view = this.createItemView(model)
-            this.itemViews[model.cid] = view
+            this.itemViews[model.id] = view
         }
     },
 
@@ -29,8 +30,8 @@ GridView = Backbone.View.extend({
             pos = {x:0, y:0},
             sortKey = this.collection.state && this.collection.state.get('sort')
 
-        _.each(this.itemViews, function(view, cid) {
-            var model = this.collection.getByCid(cid),
+        _.each(this.itemViews, function(view, id) {
+            var model = this.collection.get(id),
                 viewWidth = view.$el.outerWidth(true),
                 viewHeight = view.$el.outerHeight(true)
 
