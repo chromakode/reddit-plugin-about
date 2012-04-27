@@ -126,7 +126,9 @@ class AboutController(RedditController):
              {'username': 'krispykrackers', 'top': 1.52},
              {'username': 'pixelinaa', 'top': 1.70},
              {'username': 'powerlanguage', 'top': 1.82},
+             {'username': 'rebecalyn'},
              {'username': 'rram', 'top': 1.65, 'beard': 3, 'pyro': 10},
+             {'username': 'shlurbee'},
              {'username': 'spladug', 'top': 1.72, 'new': 11, 'beard': 10, 'pyro': 5},
              {'username': 'yishan'},
         ]
