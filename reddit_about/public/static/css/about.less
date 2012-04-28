@@ -677,7 +677,7 @@
 }
 
 #about-postcards {
-    .postcard, .zoom {
+    .postcard img, .zoom {
         cursor: pointer;
     }
 
@@ -686,11 +686,15 @@
         margin-top: 20px;
 
         .postcard {
-            padding: 7px;
+            padding: 4px (@page-width / 4 - 215) / 2;
             text-align: center;
             width: 215px;
             height: 215px;
             .transition(opacity, .5s, ease);
+        }
+
+        .placeholder {
+            width: @page-width;
         }
 
         &.zoomed .postcard {

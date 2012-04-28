@@ -3,6 +3,7 @@ var baseURL = 'http://postcards.redditstatic.com/',
     mapImageURL = _.template('http://maps.googleapis.com/maps/api/staticmap?zoom=<%= d.zoom %>&size=<%= d.width %>x<%= d.height %>&sensor=false&markers=size:mid%7Ccolor:red%7C<%= d.lat %>,<%= d.long %>')
 
 Postcard = Backbone.Model.extend({})
+PostcardsPlaceholder = Backbone.Model.extend({})
 
 PostcardCollection = Backbone.Collection.extend({
     model: Postcard,
@@ -10,10 +11,14 @@ PostcardCollection = Backbone.Collection.extend({
     chunkSize: null,
     loadedChunks: {},
 
-    init: function(callback) {
+    load: function(callback) {
         this.fetch({success: _.bind(function(collection, response) {
             this.chunkSize = this.length
             this.totalCount = response.total_postcard_count
+            this.chunkCount = Math.ceil(response.total_postcard_count / this.chunkSize)
+            for (var i = this.chunkCount; i >= 0; i--) {
+                this.add(new PostcardsPlaceholder({chunkStart: i * this.chunkSize, id: 'chunk'+i}))
+            }
             callback()
         }, this)})
     },
@@ -21,15 +26,18 @@ PostcardCollection = Backbone.Collection.extend({
     ensureLoaded: function(cardId, callback) {
         var chunkId = Math.floor(cardId / this.chunkSize)
         if (chunkId in this.loadedChunks) {
-            callback()
+            if (callback) {
+                callback()
+            }
         } else {
-            this.fetch({chunk: chunkId, add: true, success: callback})
+            this.fetch({chunk: chunkId, success: callback})
         }
     },
 
     fetch: function(options) {
         if (options && 'chunk' in options) {
             options.url = baseURL + 'postcards' + options.chunk + '.js'
+            options.add = true
         }
         var success = options.success
         options.success = function(collection, response) {
@@ -46,7 +54,7 @@ PostcardCollection = Backbone.Collection.extend({
             dataType: 'jsonp',
             jsonp: false,
             jsonpCallback: 'postcardCallback' + ('chunk' in options ? options.chunk : ''),
-            cache: true // FIXME
+            cache: true
         }, options))
     },
 
@@ -55,7 +63,7 @@ PostcardCollection = Backbone.Collection.extend({
     },
 
     comparator: function(model) {
-        return -model.id
+        return model instanceof Postcard ? -model.id : -model.get('chunkStart')
     }
 })
 
@@ -278,7 +286,7 @@ var PostcardView = Backbone.View.extend({
     className: 'postcard',
 
     events: {
-        'click': 'zoom'
+        'click img': 'zoom'
     },
 
     render: function() {
@@ -299,17 +307,36 @@ var PostcardView = Backbone.View.extend({
     },
 })
 
+var PostcardsPlaceholderView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'placeholder',
+    perLine: 4,
+    lineHeight: 215 + 2 * 4,
+
+    render: function() {
+        var grid = this.options.parent
+        this.$el.css('height', Math.ceil(grid.collection.chunkSize / this.perLine) * this.lineHeight)
+        return this
+    }
+})
+
 var PostcardGridView = GridView.extend({
     initialize: function() {
         GridView.prototype.initialize.apply(this)
-
         _.bindAll(this, '_clickOut', '_scroll')
         $('body').bind('click', this._clickOut)
         $(window).bind('scroll', this._scroll)
+        this.placeholders = []
     },
 
     createItemView: function(model) {
-        var view = new PostcardView({model: model, zoomer: this})
+        var view
+        if (model instanceof Postcard) {
+            view = new PostcardView({model: model, zoomer: this})
+        } else if (model instanceof PostcardsPlaceholder) {
+            view = new PostcardsPlaceholderView({model: model, parent: this})
+            this.placeholders.push(view)
+        }
         this.$el.append(view.render().el)
         return view
     },
@@ -361,30 +388,46 @@ var PostcardGridView = GridView.extend({
         }
     },
 
-    _scroll: function() {
-        if (this.currentZoom
-                && Math.abs(this.zoomScroll - $(window).scrollTop()) > 800) {
+    _scroll: _.debounce(function() {
+        var unzoomThreshold = 800,
+            scrollTop = $(window).scrollTop()
+        if (this.currentZoom && Math.abs(this.zoomScroll - scrollTop) > unzoomThreshold) {
             this.unzoom()
         }
-    },
+
+        this.placeholders = _.reject(this.placeholders, function(placeholder) {
+            var pos = placeholder.$el.offset(),
+                height = placeholder.$el.height()
+            if (Math.abs(scrollTop - pos.top) < height + $(window).height() ) {
+                var model = placeholder.model
+                this.collection.ensureLoaded(model.get('chunkStart'), _.bind(function() {
+                    this.collection.remove(model)
+                }, this))
+                return true
+            }
+        }, this)
+    }),
 })
 
 r.about.pages['about-postcards'] = function() {
     $('.abouttitle h1').hide()
 
-    postcards = new PostcardCollection,
+    // FIXME var
+    var postcards = new PostcardCollection,
         grid = new PostcardGridView({
             el: $('#postcards'),
             collection: postcards
         })
 
     var cardRouter = new PostcardRouter({zoomer: grid})
-    postcards.init(function() {
+    postcards.load(function() {
         if (!Backbone.history.start()) {
             cardRouter.navigate('browse')
         }
         $('.abouttitle h1')
             .find('.count').text(postcards.totalCount).end()
             .fadeIn()
+
+        grid._scroll()
     })
 }
