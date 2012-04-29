@@ -83,20 +83,21 @@ PostcardCollection = Backbone.Collection.extend({
 PostcardRouter = Backbone.Router.extend({
     routes: {
         'view/:cardId': 'viewCard',
+        'view/:cardId/:side': 'viewCard',
     },
 
     initialize: function(options) {
         this.zoomer = options.zoomer
-        this.zoomer.on('zoom', function(cardId) {
-            this.navigate('view/' + cardId)
+        this.zoomer.on('showcard', function(cardId, side) {
+            this.navigate('view/' + cardId + '/' + side)
         }, this)
-        this.zoomer.on('unzoom', function(cardId) {
+        this.zoomer.on('hidecard', function(cardId) {
             this.navigate('browse', {replace: true})
         }, this)
     },
 
-    viewCard: function(cardId) {
-        this.zoomer.zoomById(Number(cardId))
+    viewCard: function(cardId, side) {
+        this.zoomer.zoomById(Number(cardId), side)
     }
 })
 
@@ -265,6 +266,7 @@ var PostcardZoomView = Backbone.View.extend({
     flip: function() {
         if (!this.$el.is('.zoomed')) { return }
         this.$el.toggleClass('flipped')
+        this.trigger('flip', this.$el.is('.flipped') ? 'back' : 'front')
         this.trigger('showcard')
         return this
     },
@@ -376,27 +378,31 @@ var PostcardGridView = Backbone.View.extend({
         this.collection.each(this.addOne, this)
     },
 
-    zoomById: function(cardId) {
+    zoomById: function(cardId, side) {
         this.collection.ensureLoaded(cardId, _.bind(function() {
             var postcardView = this.itemViews[cardId]
             if (postcardView) {
                 $(window).scrollTop(postcardView.$el.offset().top - $(window).height() / 2)
                 this._scroll()
-                this.zoom(postcardView)
+                this.zoom(postcardView, side)
             }
         }, this))
     },
 
-    zoom: function(postcard) {
+    zoom: function(postcard, side) {
         if (!this.currentZoom || postcard.model.id != this.currentZoom.model.id) {
             this.unzoom(true)
             this.zoomScroll = $(window).scrollTop()
             this.$el.addClass('zoomed')
-            this.trigger('zoom', postcard.model.id)
-            var zoom = this.currentZoom = new PostcardZoomView({parent: postcard, zoomer: this})
+            var zoom = this.currentZoom = new PostcardZoomView({parent: postcard})
+            zoom.on('flip', this.onFlip, this)
             $('#about-postcards').append(zoom.render().el)
             _.defer(function() {
-                zoom.zoom().flip()
+                zoom.zoom()
+                if (!side || side == 'back') {
+                    zoom.flip()
+                }
+                this.trigger('showcard', postcard.model.id, side)
             })
         }
     },
@@ -404,12 +410,17 @@ var PostcardGridView = Backbone.View.extend({
     unzoom: function(switching) {
         if (!switching) {
             this.$el.removeClass('zoomed')
-            this.trigger('unzoom')
+            this.trigger('hidecard')
         }
         if (this.currentZoom) {
             this.currentZoom.unzoom()
+            this.currentZoom.off('flip', this.onFlip, this)
             this.currentZoom = null
         }
+    },
+
+    onFlip: function(side) {
+        this.trigger('showcard', this.currentZoom.model.id, side)
     },
 
     _clickOut: function(ev) {
