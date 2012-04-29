@@ -13,7 +13,7 @@ PostcardCollection = Backbone.Collection.extend({
 
     load: function(callback) {
         this.fetch({success: _.bind(function(collection, response) {
-            this.chunkSize = this.length
+            this.chunkSize = response.postcards.length
             this.totalCount = response.total_postcard_count
             this.chunkIndex = response.index
             this.chunkCount = _.size(this.chunkIndex)
@@ -333,25 +333,43 @@ var PostcardsPlaceholderView = Backbone.View.extend({
     }
 })
 
-var PostcardGridView = GridView.extend({
+var PostcardGridView = Backbone.View.extend({
     initialize: function() {
-        GridView.prototype.initialize.apply(this)
+        this.collection
+            .on('add', this.addOne, this)
+            .on('remove', this.removeOne, this)
+            .on('reset', this.addAll, this)
+
+        this.itemViews = []
+        this.placeholders = []
+
         _.bindAll(this, '_clickOut', '_scroll')
         $('body').bind('click', this._clickOut)
         $(window).bind('scroll', this._scroll)
-        this.placeholders = []
     },
 
-    createItemView: function(model) {
-        var view
+    addOne: function(model) {
         if (model instanceof Postcard) {
-            view = new PostcardView({model: model, zoomer: this})
+            var view = new PostcardView({model: model, zoomer: this})
         } else if (model instanceof PostcardsPlaceholder) {
-            view = new PostcardsPlaceholderView({model: model, parent: this})
+            var view = new PostcardsPlaceholderView({model: model, parent: this})
             this.placeholders.push(view)
         }
-        this.$el.append(view.render().el)
-        return view
+
+        var index = this.collection.indexOf(model),
+            elBefore = this.$el.children().eq(index)
+        if (elBefore.length) {
+            elBefore.after(view.render().el)
+        } else {
+            this.$el.append(view.render().el)
+        }
+        this.itemViews[model.id] = view
+    },
+
+    removeOne: function(model) {
+        var view = this.itemViews[model.id]
+        view.remove()
+        this.itemViews[model.id] = null
     },
 
     addAll: function() {
@@ -360,13 +378,12 @@ var PostcardGridView = GridView.extend({
 
     zoomById: function(cardId) {
         this.collection.ensureLoaded(cardId, _.bind(function() {
-            _.defer(_.bind(function() {
-                var postcardView = this.itemViews[cardId]
-                if (postcardView) {
-                    $(window).scrollTop(postcardView.$el.offset().top - $(window).height() / 2)
-                    this.zoom(postcardView)
-                }
-            }, this))
+            var postcardView = this.itemViews[cardId]
+            if (postcardView) {
+                $(window).scrollTop(postcardView.$el.offset().top - $(window).height() / 2)
+                this._scroll()
+                this.zoom(postcardView)
+            }
         }, this))
     },
 
@@ -440,7 +457,5 @@ r.about.pages['about-postcards'] = function() {
         $('.abouttitle h1')
             .find('.count').text(postcards.totalCount).end()
             .fadeIn()
-
-        grid._scroll()
     })
 }

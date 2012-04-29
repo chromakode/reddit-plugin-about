@@ -1,14 +1,11 @@
 GridView = Backbone.View.extend({
-    events: {
-    },
-
-    itemViews: {},
     initialize: function() {
         this.collection
             .on('add', this.addOne, this)
-            .on('remove', this.removeOne, this)
             .on('reset', this.addAll, this)
             .on('all', _.debounce(this.render), this)
+
+        this.itemViews = {}
     },
 
     createItemView: function(model) {
@@ -20,14 +17,8 @@ GridView = Backbone.View.extend({
         this.itemViews[model.id] = view
     },
 
-    removeOne: function(model) {
-        var view = this.itemViews[model.id]
-        view.remove()
-        this.itemViews[model.id] = null
-    },
-
     addAll: function() {
-        this.collection.each(_.bind(this.addOne, this))
+        this.collection.each(this.addOne, this)
     },
 
     render: function() {

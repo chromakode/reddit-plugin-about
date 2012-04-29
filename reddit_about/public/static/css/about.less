@@ -682,15 +682,21 @@
     }
 
     #postcards {
-        position: relative;
         margin-top: 20px;
 
         .postcard {
+            display: inline-block;
             padding: 4px (@page-width / 4 - 215) / 2;
             text-align: center;
             width: 215px;
             height: 215px;
+            vertical-align: top;
             .transition(opacity, .5s, ease);
+
+            img {
+                position: relative;
+                top: 50%;
+            }
         }
 
         .placeholder {
@@ -701,10 +707,6 @@
             opacity: .65;
         }
 
-        img {
-            position: relative;
-            top: 50%;
-        }
     }
 
     .postcard-zoombox {
