@@ -15,16 +15,29 @@ PostcardCollection = Backbone.Collection.extend({
         this.fetch({success: _.bind(function(collection, response) {
             this.chunkSize = this.length
             this.totalCount = response.total_postcard_count
-            this.chunkCount = Math.ceil(response.total_postcard_count / this.chunkSize)
-            for (var i = this.chunkCount; i >= 0; i--) {
-                this.add(new PostcardsPlaceholder({chunkStart: i * this.chunkSize, id: 'chunk'+i}))
-            }
+            this.chunkIndex = response.index
+            this.chunkCount = _.size(this.chunkIndex)
+            _.each(this.chunkIndex, function(bounds, idx) {
+                this.add(new PostcardsPlaceholder({chunkStart: bounds[0], id: 'chunk'+idx}))
+            }, this)
             callback()
         }, this)})
     },
 
     ensureLoaded: function(cardId, callback) {
-        var chunkId = Math.floor(cardId / this.chunkSize)
+        var chunkId
+        for (var i = 0; i < this.chunkCount; i++) {
+            var bounds = this.chunkIndex[i]
+            if (cardId >= bounds[0] && cardId <= bounds[1]) {
+                chunkId = i
+                break
+            }
+        }
+        if (chunkId == null) {
+            // :(
+            return
+        }
+
         if (chunkId in this.loadedChunks) {
             if (callback) {
                 callback()
