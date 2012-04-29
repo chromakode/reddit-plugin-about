@@ -467,6 +467,6 @@ r.about.pages['about-postcards'] = function() {
         }
         $('.abouttitle h1')
             .find('.count').text(postcards.totalCount).end()
-            .fadeIn()
+            .fadeIn(100)
     })
 }
