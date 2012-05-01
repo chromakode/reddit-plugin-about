@@ -429,7 +429,7 @@ var PostcardGridView = Backbone.View.extend({
         }
     },
 
-    _scroll: _.debounce(function() {
+    _scroll: _.throttle(function() {
         var unzoomThreshold = 800,
             scrollTop = $(window).scrollTop()
         if (this.currentZoom && Math.abs(this.zoomScroll - scrollTop) > unzoomThreshold) {
@@ -447,7 +447,7 @@ var PostcardGridView = Backbone.View.extend({
                 return true
             }
         }, this)
-    }),
+    }, 250),
 })
 
 r.about.pages['about-postcards'] = function() {
