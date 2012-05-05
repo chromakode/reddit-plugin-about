@@ -103,7 +103,7 @@ PostcardRouter = Backbone.Router.extend({
 
 var PostcardInfoView = Backbone.View.extend({
     tagName: 'div',
-    className: 'cardinfo',
+    className: 'infobox',
 
     events: {
         'mouseover': 'zoomIn',
@@ -163,7 +163,7 @@ var PostcardInfoView = Backbone.View.extend({
 
             // Since the parent is animating, we must calculate the final position.
             target = {
-                left: parentPos.left + (parent.maxWidth - image.width) / 2 - $(this.el).outerWidth() - 10,
+                left: parentPos.left + (parent.maxWidth - image.width) / 2 - this.$el.outerWidth() - 10,
                 top: parentPos.top + (parent.maxHeight - image.height) / 2
             }
 
@@ -172,7 +172,7 @@ var PostcardInfoView = Backbone.View.extend({
             this.hide()
             this.$el.css(target)
             this.target = target
-            setTimeout(_.bind(function() {
+            _.delay(_.bind(function() {
                 $(this.el)
                     .removeClass('hide')
                     .addClass('show')
@@ -212,7 +212,7 @@ var PostcardZoomView = Backbone.View.extend({
 
     render: function() {
         this._resize('small')
-        this._position()
+        this._origPosition()
         return this
     },
 
@@ -222,11 +222,11 @@ var PostcardZoomView = Backbone.View.extend({
     },
 
 
-    _position: function() {
+    _origPosition: function() {
         var pos = this.options.parent.$('img').offset()
         this.$('.zoom').css({
             left: pos.left - this.frontLeft,
-            top: pos.top
+            top: pos.top - this.frontTop
         })
     },
 
@@ -242,14 +242,16 @@ var PostcardZoomView = Backbone.View.extend({
 
         this.$('.front').attr('width', images.front.width)
 
-        cardOffset = 
+
+        // Center the back face with respect to the front.
         this.$('.back')
             .attr('width', images.back.width)
             .css({
-                left: -(this.maxWidth - images.front.width) / 2,
-                top: (this.maxHeight - images.back.height) / 2
+                left: (images.front.width - images.back.width) / 2,
+                top: (images.front.height - images.back.height) / 2
             })
 
+        // Scale and displace the .zoom plane to match the front face.
         this.$('.zoom').css({
             width: images.front.width,
             height: images.front.height,
@@ -287,12 +289,12 @@ var PostcardZoomView = Backbone.View.extend({
 
     unzoom: function() {
         this.trigger('hidecard')
-        this.$el.removeClass('flipped zoomed')
         this._resize('small', true)
-        this._position()
-        this.$el.one('webkitTransitionEnd', _.bind(function() {
+        this._origPosition()
+        this.$el.removeClass('flipped zoomed')
+        _.delay(_.bind(function() {
             this.remove()
-        }, this))
+        }, this), 700)
     }
 })
 

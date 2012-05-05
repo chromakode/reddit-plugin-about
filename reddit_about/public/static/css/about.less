@@ -710,10 +710,6 @@
 }
 
 #about-postcards {
-    .postcard img, .zoom {
-        cursor: pointer;
-    }
-
     #postcards {
         margin-top: 20px;
 
@@ -730,6 +726,7 @@
                 position: relative;
                 top: 50%;
                 box-shadow: 0 0 4px #555;
+                cursor: pointer;
             }
         }
 
@@ -747,21 +744,20 @@
         position: absolute;
         top: 0;
         left: 0;
-        .perspective(3000px);
-        .transform-style(preserve-3d);
         z-index: 5;
 
         .zoom {
             position: absolute;
             .transition(all, .65s);
+            .transform(perspective(2500px));
             .transform-style(preserve-3d);
-            z-index: 10;
         }
 
         .zoom .face {
+            position: absolute;
             background: white;
             box-shadow: 0 0 20px transparent;
-            position: absolute;
+            cursor: pointer;
             .backface-visibility(hidden);
             .transform-style(preserve-3d);
             .transition(all, .65s);
@@ -774,7 +770,7 @@
         .zoom .back {
             .transform(rotateY(180deg));
         }
-        
+
         &.rotate .zoom .back {
             .transform(rotateZ(-90deg) rotateY(180deg));
         }
@@ -788,21 +784,21 @@
         }
 
         &.flipped .zoom {
-            .transform(rotateY(180deg));
+            .transform(perspective(2500px) rotateY(180deg));
         }
 
         &.rotate.flipped .zoom {
-            .transform(rotate3d(1, 1, 0, 180deg));
+            .transform(perspective(2500px) rotate3d(1, 1, 0, 180deg));
         }
 
-        .cardinfo {
+        .infobox {
+            position: absolute;
+            width: 85px;
+            padding: 3px;
+            text-align: center;
             background: rgba(60,60,60,.8);
             border-radius: 3px;
             opacity: 0;
-            padding: 3px;
-            position: absolute;
-            text-align: center;
-            width: 85px;
             z-index: 9;
 
             &.show {
