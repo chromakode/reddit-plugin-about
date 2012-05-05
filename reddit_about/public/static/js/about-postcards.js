@@ -208,6 +208,8 @@ var PostcardZoomView = Backbone.View.extend({
         if (frontOrientation != backOrientation) {
             $(this.el).addClass('rotate')
         }
+
+        this.currentSide = 'front'
     },
 
     render: function() {
@@ -268,7 +270,8 @@ var PostcardZoomView = Backbone.View.extend({
     flip: function() {
         if (!this.$el.is('.zoomed')) { return }
         this.$el.toggleClass('flipped')
-        this.trigger('flip', this.$el.is('.flipped') ? 'back' : 'front')
+        this.currentSide = this.$el.is('.flipped') ? 'back' : 'front'
+        this.trigger('flip', this.currentSide)
         this.trigger('showcard')
         return this
     },
@@ -392,6 +395,7 @@ var PostcardGridView = Backbone.View.extend({
     },
 
     zoom: function(postcard, side) {
+        side = side || 'back'
         if (!this.currentZoom || postcard.model.id != this.currentZoom.model.id) {
             this.unzoom(true)
             this.zoomScroll = $(window).scrollTop()
@@ -399,13 +403,17 @@ var PostcardGridView = Backbone.View.extend({
             var zoom = this.currentZoom = new PostcardZoomView({parent: postcard})
             zoom.on('flip', this.onFlip, this)
             $('#about-postcards').append(zoom.render().el)
+
+            // Defer to position the zoom before we start moving it.
             _.defer(_.bind(function() {
                 zoom.zoom()
-                if (!side || side == 'back') {
+                if (side == 'back') {
                     zoom.flip()
                 }
                 this.trigger('showcard', postcard.model.id, side)
             }, this))
+        } else if (this.currentZoom.currentSide != side) {
+            this.currentZoom.flip()
         }
     },
 
