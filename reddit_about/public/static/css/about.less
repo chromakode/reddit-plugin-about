@@ -775,6 +775,14 @@
             .transform(rotateZ(-90deg) rotateY(180deg));
         }
 
+        &.flipped .zoom {
+            .transform(perspective(2500px) rotateY(180deg));
+        }
+
+        &.rotate.flipped .zoom {
+            .transform(perspective(2500px) rotate3d(1, 1, 0, 180deg));
+        }
+
         .back, &.flipped .front {
             z-index: 11;
         }
@@ -783,12 +791,13 @@
             z-index: 12;
         }
 
-        &.flipped .zoom {
-            .transform(perspective(2500px) rotateY(180deg));
+        .no-csstransforms3d & {
+            .back { opacity: 0; }
         }
 
-        &.rotate.flipped .zoom {
-            .transform(perspective(2500px) rotate3d(1, 1, 0, 180deg));
+        .no-csstransforms3d &.flipped {
+            .back { opacity: 1; }
+            .front { opacity: 0; }
         }
 
         .infobox {

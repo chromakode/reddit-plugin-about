@@ -176,7 +176,7 @@ var PostcardInfoView = Backbone.View.extend({
                 $(this.el)
                     .removeClass('hide')
                     .addClass('show')
-            }, this), 500)
+            }, this), Modernizr.csstransforms3d ? 500 : 0)
        }
     }
 })
@@ -298,7 +298,7 @@ var PostcardZoomView = Backbone.View.extend({
         _.delay(_.bind(function() {
             this.unbind()
             this.remove()
-        }, this), 700)
+        }, this), Modernizr.csstransforms3d ? 700 : 0)
     }
 })
 
