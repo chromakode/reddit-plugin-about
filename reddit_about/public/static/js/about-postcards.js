@@ -397,13 +397,13 @@ var PostcardGridView = Backbone.View.extend({
             var zoom = this.currentZoom = new PostcardZoomView({parent: postcard})
             zoom.on('flip', this.onFlip, this)
             $('#about-postcards').append(zoom.render().el)
-            _.defer(function() {
+            _.defer(_.bind(function() {
                 zoom.zoom()
                 if (!side || side == 'back') {
                     zoom.flip()
                 }
                 this.trigger('showcard', postcard.model.id, side)
-            })
+            }, this))
         }
     },
 

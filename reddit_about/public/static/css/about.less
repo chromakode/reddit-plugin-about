@@ -8,7 +8,40 @@
     -webkit-transition: @arguments;
     -moz-transition: @arguments;
     -o-transition: @arguments;
+    -ms-transition: @arguments;
     transition: @arguments;
+}
+
+.transform-style(...) {
+    -webkit-transform-style: @arguments;
+    -moz-transform-style: @arguments;
+    -o-transform-style: @arguments;
+    -ms-transform-style: @arguments;
+    transform-style: @arguments;
+}
+
+.backface-visibility(...) {
+    -webkit-backface-visibility: @arguments;
+    -moz-backface-visibility: @arguments;
+    -o-backface-visibility: @arguments;
+    -ms-backface-visibility: @arguments;
+    backface-visibility: @arguments;
+}
+
+.perspective(...) {
+    -webkit-perspective: @arguments;
+    -moz-perspective: @arguments;
+    -o-perspective: @arguments;
+    -ms-perspective: @arguments;
+    perspective: @arguments;
+}
+
+.transform(...) {
+    -webkit-transform: @arguments;
+    -moz-transform: @arguments;
+    -o-transform: @arguments;
+    -ms-transform: @arguments;
+    transform: @arguments;
 }
 
 .arrow (@_, @size, @width, @border-color, @offset: 0, @bg-color: white) {
@@ -711,13 +744,17 @@
     }
 
     .postcard-zoombox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        .perspective(3000px);
+        .transform-style(preserve-3d);
         z-index: 5;
 
         .zoom {
             position: absolute;
-            -webkit-transform: perspective(1250);
-            -webkit-transform-style: preserve-3d;
             .transition(all, .65s);
+            .transform-style(preserve-3d);
             z-index: 10;
         }
 
@@ -725,7 +762,8 @@
             background: white;
             box-shadow: 0 0 20px transparent;
             position: absolute;
-            -webkit-backface-visibility: hidden;
+            .backface-visibility(hidden);
+            .transform-style(preserve-3d);
             .transition(all, .65s);
         }
 
@@ -733,11 +771,12 @@
             box-shadow: 0 0 30px rgba(0,0,0,.5);
         }
 
-        .zoom .front {
-        }
-
         .zoom .back {
-            -webkit-transform: rotateY(180deg);
+            .transform(rotateY(180deg));
+        }
+        
+        &.rotate .zoom .back {
+            .transform(rotateZ(-90deg) rotateY(180deg));
         }
 
         .back, &.flipped .front {
@@ -749,15 +788,11 @@
         }
 
         &.flipped .zoom {
-            -webkit-transform: perspective(1250) rotateY(180deg) translateZ(-1px);
-        }
-
-        &.rotate .zoom .back {
-            -webkit-transform: rotateZ(-90deg) rotateY(180deg);
+            .transform(rotateY(180deg));
         }
 
         &.rotate.flipped .zoom {
-            -webkit-transform: perspective(1250) rotateY(180deg) rotateZ(90deg) translateZ(-1px);
+            .transform(rotate3d(1, 1, 0, 180deg));
         }
 
         .cardinfo {
