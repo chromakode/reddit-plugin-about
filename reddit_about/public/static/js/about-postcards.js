@@ -296,6 +296,7 @@ var PostcardZoomView = Backbone.View.extend({
         this._origPosition()
         this.$el.removeClass('flipped zoomed')
         _.delay(_.bind(function() {
+            this.unbind()
             this.remove()
         }, this), 700)
     }
