@@ -88,6 +88,8 @@ class AboutController(RedditController):
             {'date': localdate(2010, 7, 26), 'class': 'org important', 'title': 'reddit gold released', 'url': 'http://blog.reddit.com/2010/07/reddit-needs-help.html'},
             {'date': localdate(2011, 4, 1), 'class': 'culture aprilfools important', 'title': 'reddit mold', 'url': 'http://blog.reddit.com/2011/04/mold-mph-mmmph-mph.html'},
             {'date': localdate(2011, 10, 18), 'class': 'org important', 'title': '/r/reddit.com archived', 'url': 'http://blog.reddit.com/2011/10/saying-goodbye-to-old-friend-and.html'},
+            {'date': localdate(2012, 1, 18), 'class': 'culture important', 'title': 'SOPA blackout', 'url': 'http://blog.reddit.com/2012/01/stopped-they-must-be-on-this-all.html'},
+            {'date': localdate(2012, 3, 8), 'class': 'org important', 'title': 'CEO announced', 'url': 'http://blog.reddit.com/2012/03/new-reddit-ceo-reporting-for-duty.html'},
         ]
 
         sites = [
