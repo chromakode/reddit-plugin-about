@@ -53,7 +53,9 @@ GridView = Backbone.View.extend({
             pos.x += viewWidth
         }, this)
 
-        this.$el.css('height', gridHeight)
+        this.$el
+            .css('height', gridHeight)
+            .removeClass('loading')
         return this
     }
 })

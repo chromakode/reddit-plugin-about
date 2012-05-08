@@ -4,7 +4,7 @@
 %>
 
 <%def name="person_grid(id, data)">
-  <ul id="${id}" class="inner people-grid">
+  <ul id="${id}" class="inner people-grid loading">
     %for person in data:
       <li class="person ${person['username']}">
           <img class="avatar" src="${static('about/avatar/' + person['username'].lower() + '.png')}" alt="${person['username']}'s avatar" />
