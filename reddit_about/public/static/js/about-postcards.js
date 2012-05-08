@@ -101,19 +101,46 @@ PostcardRouter = Backbone.Router.extend({
     }
 })
 
-var PostcardInfoView = Backbone.View.extend({
+var PostcardOverlayView = Backbone.View.extend({
     tagName: 'div',
+    distanceThreshold: 10,
+
+    initialize: function() {
+        this.options.parent.bind('showcard', this._position, this)
+        this.options.parent.bind('hidecard', this.hide, this)
+        this.currentTarget = {left: 0, top: 0}
+        this.$el.addClass('postcard-overlay')
+    },
+
+    hide: function() {
+        this.$el.addClass('hide')
+        console.log('hide', this.el.className)
+    },
+
+    _position: function() {
+        var oldTarget = this.currentTarget,
+            target = this._target()
+
+        var distance = Math.sqrt(Math.pow(target.left - oldTarget.left, 2) + Math.pow(target.top - oldTarget.top, 2))
+        if (distance >= this.distanceThreshold) {
+            this.hide()
+            this.$el.css(target)
+            this.currentTarget = target
+            _.delay(_.bind(function() {
+                $(this.el)
+                    .removeClass('hide')
+                    .addClass('show')
+            }, this), Modernizr.csstransforms3d ? 500 : 0)
+       }
+    }
+})
+
+var PostcardInfoView = PostcardOverlayView.extend({
     className: 'infobox',
 
     events: {
         'mouseover': 'zoomIn',
         'mouseout': 'zoomOut'
-    },
-
-    initialize: function() {
-        _.bindAll(this, '_position', 'hide')
-        this.options.parent.bind('showcard', this._position)
-        this.options.parent.bind('hidecard', this.hide)
     },
 
     render: function() {
@@ -127,10 +154,6 @@ var PostcardInfoView = Backbone.View.extend({
         this.zoomOut()
         this.$('.date').text(this.model.get('date'))
         return this
-    },
-
-    hide: function() {
-        $(this.el).addClass('hide')
     },
 
     zoomIn: function() {
@@ -155,52 +178,61 @@ var PostcardInfoView = Backbone.View.extend({
         }))
     },
 
-    _position: function() {
+    _target: function() {
+        var parentPos = this.options.parent.currentFacePosition()
+
+        // Since the parent is animating, we must calculate the final position.
+        return {
+            left: parentPos.left - this.$el.outerWidth() - 10,
+            top: parentPos.top
+        }
+    }
+})
+
+var PostcardCloseView = PostcardOverlayView.extend({
+    className: 'postcard-close',
+    distanceThreshold: 0,
+
+    events: {
+        'click': 'unzoom'
+    },
+
+    unzoom: function(ev) {
+        this.options.zoomer.unzoom()
+    },
+
+    _target: function() {
         var parent = this.options.parent,
-            image = parent.currentImage(),
-            parentPos = parent.position,
-            oldTarget = this.target || {left: 0, top: 0},
+            parentPos = parent.currentFacePosition()
 
-            // Since the parent is animating, we must calculate the final position.
-            target = {
-                left: parentPos.left + (parent.maxWidth - image.width) / 2 - this.$el.outerWidth() - 10,
-                top: parentPos.top + (parent.maxHeight - image.height) / 2
-            }
-
-        var distance = Math.sqrt(Math.pow(target.left - oldTarget.left, 2) + Math.pow(target.top - oldTarget.top, 2))
-        if (distance > 10) {
-            this.hide()
-            this.$el.css(target)
-            this.target = target
-            _.delay(_.bind(function() {
-                $(this.el)
-                    .removeClass('hide')
-                    .addClass('show')
-            }, this), Modernizr.csstransforms3d ? 500 : 0)
-       }
+        return {
+            left: parentPos.right,
+            top: parentPos.top
+        }
     }
 })
 
 var PostcardZoomView = Backbone.View.extend({
     tagName: 'div',
     className: 'postcard-zoombox',
+    topSpace: 20,
 
     events: {
-        'click .zoom': 'flip'
+        'click .zoom .face': 'flip'
     },
 
     initialize: function() {
         this.model = this.model || this.options.parent.model
 
         $(this.el).append(
-            this.make('div', {class: 'zoom'}, [
-                this.make('img', {class: 'face front'}),
-                this.make('img', {class: 'face back'}),
+            this.make('div', {'class': 'zoom'}, [
+                this.make('img', {'class': 'face front'}),
+                this.make('img', {'class': 'face back'})
             ])
         )
 
-        var info = new PostcardInfoView({model: this.model, parent: this})
-        $(this.el).append(info.render().el)
+        this.$el.append(new PostcardInfoView({model: this.model, parent: this}).render().el)
+        this.$el.append(new PostcardCloseView({parent: this, zoomer: this.options.zoomer}).render().el)
 
         var smallImages = this.model.get('images').small
         var frontOrientation = smallImages.front.width > smallImages.front.height,
@@ -219,10 +251,19 @@ var PostcardZoomView = Backbone.View.extend({
     },
 
     currentImage: function() {
-        var face = !$(this.el).is('.flipped') ? 'front' : 'back'
-        return this.model.get('images')[this.size][face]
+        return this.model.get('images')[this.size][this.currentSide]
     },
 
+    currentFacePosition: function() {
+        var image = this.currentImage(),
+            position = {
+                left: this.position.left + (this.maxWidth - image.width) / 2,
+                top: this.position.top + (this.maxHeight - image.height) / 2
+            }
+        position.right = position.left + image.width
+        position.bottom = position.top + image.height
+        return position
+    },
 
     _origPosition: function() {
         var pos = this.options.parent.$('img').offset()
@@ -277,7 +318,6 @@ var PostcardZoomView = Backbone.View.extend({
     },
 
     zoom: function() {
-        var images = this.model.get('images')
         this._resize('full')
         this.position = {
             'left': ($(window).width() - this.maxWidth) / 2,
@@ -401,7 +441,7 @@ var PostcardGridView = Backbone.View.extend({
             this.unzoom(true)
             this.zoomScroll = $(window).scrollTop()
             this.$el.addClass('zoomed')
-            var zoom = this.currentZoom = new PostcardZoomView({parent: postcard})
+            var zoom = this.currentZoom = new PostcardZoomView({parent: postcard, zoomer: this})
             zoom.on('flip', this.onFlip, this)
             $('#about-postcards').append(zoom.render().el)
 
