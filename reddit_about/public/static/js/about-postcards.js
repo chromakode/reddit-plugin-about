@@ -283,12 +283,15 @@ var PostcardZoomView = Backbone.View.extend({
         this.frontLeft = (this.maxWidth - images.front.width) / 2,
         this.frontTop = (this.maxHeight - images.front.height) / 2
 
-        this.$('.front').attr('width', images.front.width)
+        this.$('.front')
+            .attr('width', images.front.width)
+            .attr('height', images.front.height)
 
 
         // Center the back face with respect to the front.
         this.$('.back')
             .attr('width', images.back.width)
+            .attr('height', images.back.height)
             .css({
                 left: (images.front.width - images.back.width) / 2,
                 top: (images.front.height - images.back.height) / 2
