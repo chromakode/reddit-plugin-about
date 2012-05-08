@@ -28,7 +28,7 @@ class AboutPage(BoringPage):
             NavButton(_('team'), '/team'),
             NavButton(_('postcards'), '/postcards'),
             NavButton(_('media'), '/media'),
-            NavButton(_('guide'), '/guide')
+            #NavButton(_('guide'), '/guide')
         ]
         about_menu = NavMenu(about_buttons, type='tabmenu', base_path='/about/', css_class='about-menu')
         return self.content_stack([AboutTitle(self.title_msg), about_menu, self._content])
