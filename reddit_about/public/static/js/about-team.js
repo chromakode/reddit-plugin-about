@@ -1,6 +1,6 @@
 SortRouter = Backbone.Router.extend({
     routes: {
-        'sort/:sortId': 'sort',
+        'sort/:sortId': 'sort'
     },
 
     initialize: function(options) {
@@ -176,7 +176,7 @@ PeopleGridView = GridView.extend({
 
     unfocus: function() {
         this.$el.removeClass('focusing')
-    },
+    }
 })
 
 teamSorts = new Backbone.Collection

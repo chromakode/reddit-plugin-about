@@ -55,7 +55,7 @@ TimelineView = Backbone.View.extend({
 
     events: {
         'mouseover .event': 'focusEvent',
-        'mouseout .event': 'unfocusEvent',
+        'mouseout .event': 'unfocusEvent'
     },
 
     eventViews: {},

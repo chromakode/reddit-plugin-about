@@ -29,7 +29,7 @@ AboutTimelineView = TimelineView.extend({
 
     filterTop: function(model) {
         return ~model.get('class').indexOf('org')
-    },
+    }
 })
 
 slideshowImages = new Backbone.Collection

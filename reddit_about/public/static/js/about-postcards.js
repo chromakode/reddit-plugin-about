@@ -83,7 +83,7 @@ PostcardCollection = Backbone.Collection.extend({
 PostcardRouter = Backbone.Router.extend({
     routes: {
         'view/:cardId': 'viewCard',
-        'view/:cardId/:side': 'viewCard',
+        'view/:cardId/:side': 'viewCard'
     },
 
     initialize: function(options) {
@@ -117,11 +117,11 @@ var PostcardInfoView = Backbone.View.extend({
     },
 
     render: function() {
-        $(this.el).append(
-            this.make('a', {class: 'maplink', target: '_blank'}, [
-                this.make('img', {class: 'map'})
+        this.$el.append(
+            this.make('a', {'class': 'maplink', target: '_blank'}, [
+                this.make('img', {'class': 'map'})
             ]),
-            this.make('span', {class: 'date'})
+            this.make('span', {'class': 'date'})
         )
 
         this.zoomOut()
@@ -281,8 +281,8 @@ var PostcardZoomView = Backbone.View.extend({
         this._resize('full')
         this.position = {
             'left': ($(window).width() - this.maxWidth) / 2,
-            'top': Math.max(this.$el.parent().position().top + 10,
-                            $(window).scrollTop() + ($(window).height() - this.maxHeight) / 2),
+            'top': Math.max(this.$el.parent().position().top + this.topSpace,
+                            $(window).scrollTop() + ($(window).height() - this.maxHeight) / 2)
         }
         this.$('.zoom').css(this.position)
         this.$el.addClass('zoomed')
@@ -325,7 +325,7 @@ var PostcardView = Backbone.View.extend({
 
     zoom: function() {
         this.options.zoomer.zoom(this)
-    },
+    }
 })
 
 var PostcardsPlaceholderView = Backbone.View.extend({
@@ -458,7 +458,7 @@ var PostcardGridView = Backbone.View.extend({
                 return true
             }
         }, this)
-    }, 250),
+    }, 250)
 })
 
 r.about.pages['about-postcards'] = function() {
