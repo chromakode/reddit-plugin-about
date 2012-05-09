@@ -4,11 +4,12 @@ from pylons.i18n import _
 from r2.controllers.reddit_base import RedditController
 from r2.models import *
 from r2.lib.pages import Templated, BoringPage
-from r2.lib.menus import NavMenu, NavButton
+from r2.lib.menus import NavMenu, NavButton, OffsiteButton
 from r2.lib.template_helpers import comment_label
 
 import re
 import random
+from itertools import chain
 from datetime import datetime
 
 def localdate(*args):
@@ -48,13 +49,24 @@ class About(Templated):
         self.sites = sites
 
 class Team(Templated):
-    def __init__(self, team, alumni, sorts):
+    def __init__(self, team, alumni, sorts, extra_sorts):
         Templated.__init__(self)
         self.team = team
         self.alumni = alumni
-        self.sorts = sorts
-        sort_buttons = [NavButton(sort['title'], '#sort/'+sort['id'], css_class='choice-'+sort['id']) for sort in sorts]
+        self.sorts = sorts + extra_sorts
+
+        sort_buttons = []
+        extra_sort_index = random.randint(len(sorts), len(self.sorts)-1)
+        for idx, sort in enumerate(self.sorts):
+            css_class = 'choice-'+sort['id']
+            if sort in extra_sorts and idx != extra_sort_index:
+                css_class += ' hidden-sort'
+            button = OffsiteButton(sort['title'], '#sort/'+sort['id'], css_class=css_class)
+            sort_buttons.append(button)
         self.sort_menu = NavMenu(sort_buttons, title=_('sorted by'), base_path=request.path, type='lightdrop', default='#sort/random')
+
+        # The caching check won't catch the hidden-sort classes
+        self.sort_menu.cachable = False
 
 class Postcards(Templated):
     pass
@@ -107,36 +119,52 @@ class AboutController(RedditController):
         return AboutPage('about-main', _('we power awesome communities.'), _('about reddit'), content).render()
 
     def GET_team(self):
-        sorts = (
+        sorts = [
              {'id': 'random', 'title': _('random'), 'dir': 1},
-             {'id': 'new', 'title': _('new'), 'dir': 1},
-             {'id': 'hot', 'title': _('hot'), 'dir': -1},
+             {'id': 'new', 'title': _('new'), 'dir': -1},
              {'id': 'top', 'title': _('top'), 'dir': -1},
              {'id': 'beard', 'title': _('beard'), 'dir': -1},
              {'id': 'pyro', 'title': _('pyromania'), 'dir': -1},
+             {'id': 'wpm', 'title': _('words per minute'), 'dir': -1},
+        ]
+
+        extra_sorts = [
+             {'id': 'starcraft', 'title': _('love of starcraft'), 'dir': -1},
+             {'id': 'shatner', 'title': _('love of william shatner'), 'dir': -1},
              {'id': 'arnold', 'title': _('love of arnold schwarzenegger'), 'dir': -1},
-             {'id': 'spy', 'title': _('most likely to be a spy'), 'dir': -1}
-        )
+             {'id': 'spy', 'title': _('most likely to be a spy'), 'dir': -1},
+             {'id': 'pokemon', 'title': _('love of Pokemon'), 'dir': -1},
+             {'id': 'scorpions', 'title': _('fear of scorpions'), 'dir': -1},
+             {'id': 'zombies', 'title': _('outrunning zombies'), 'dir': -1},
+             {'id': 'cycling', 'title': _('longest distance on a bicycle'), 'dir': -1},
+             {'id': 'cartman', 'title': _('Eric Cartman impression'), 'dir': -1},
+             {'id': 'whales', 'title': _('fear of whales'), 'dir': -1},
+             {'id': 'pronunciation', 'title': _('pronunciation'), 'dir': -1},
+             {'id': 'giants', 'title': _('giants schwag'), 'dir': -1},
+             {'id': 'mornings', 'title': _('early riser'), 'dir': -1},
+             {'id': 'pings', 'title': _('number of pings required, Vasily'), 'dir': -1},
+             {'id': 'rabbits', 'title': _('number of rabbits owned'), 'dir': -1},
+        ]
 
         team = [
-             {'username': 'alienth', 'new': 12, 'top': 1.83, 'beard': 8, 'pyro': 10},
-             {'username': 'bitcrunch', 'top': 1.55},
-             {'username': 'bsimpson', 'top': 1.75, 'arnold': 9999},
-             {'username': 'chromakode', 'new': 13, 'top': 1.68, 'beard': 5, 'spy': 9999},
-             {'username': 'cupcake1713', 'top': 1.63},
-             {'username': 'hueypriest', 'name':'Erik Martin', 'role':'General Manager', 'description':'Erik is our general manager and nerd herder. He has an awesome dog named Mog who can often be found around the office.', 'new': 10, 'top': 1.83, 'beard': 10},
-             {'username': 'intortus', 'top': 1.83, 'beard': 5},
-             {'username': 'jenakalif', 'top': 1.73},
-             {'username': 'kemitche', 'top': 1.82, 'beard': 6},
-             {'username': 'kirbyrules', 'top': 1.65},
-             {'username': 'krispykrackers', 'top': 1.52},
-             {'username': 'pixelinaa', 'top': 1.70},
-             {'username': 'powerlanguage', 'top': 1.82},
-             {'username': 'rebecalyn'},
-             {'username': 'rram', 'top': 1.65, 'beard': 3, 'pyro': 10},
-             {'username': 'shlurbee'},
-             {'username': 'spladug', 'top': 1.72, 'new': 11, 'beard': 10, 'pyro': 5},
-             {'username': 'yishan'},
+            {"beard": 6, "description": "", "favorite_subreddits": ["", "/r/tldr", "/r/diablo", "/r/AskScience", "/r/tipofmytongue"], "name": "Jason Harvey", "new": 201101, "pyro": 9, "role": "Systems Administrator", "role_details": "linux magician", "starcraft": -9999, "top": 1.83, "username": "alienth"},
+            {"beard": 0, "description": "", "favorite_subreddits": [], "name": "Marta Gossage", "pyro": 0, "role": "", "role_details": "", "shatner": 9999, "top": 1.55, "username": "bitcrunch"},
+            {"arnold": 9999, "beard": 2, "description": "", "favorite_subreddits": ["/r/AskReddit", "/r/foodforthought", "/r/relationship_advice", "/r/woahdude"], "name": "Brian Simpson", "new": 201106, "pyro": 0, "role": "Programmer", "role_details": "", "top": 1.75, "username": "bsimpson"},
+            {"beard": 4, "description": "Max makes your web browser do stuff. Occasionally he draws aliens.", "favorite_subreddits": ["/r/starcraft", "/r/programming", "/r/askscience", "/r/theoryofreddit"], "name": "Max Goodman", "new": 201104, "pyro": 2, "role": "JavaScript Apologist", "role_details": "breaks things", "spy": 9999, "top": 1.68, "username": "chromakode", "wpm": 100},
+            {"beard": 0, "description": "Our first graduate from our esteemed internship program!", "favorite_subreddits": ["/r/fifthworldproblems", "/r/aww", "/r/AskScience", "/r/harrypotheads"], "name": "Alex Angel", "new": 201006, "pokemon": 9999, "pyro": 6, "role": "Product Marketing Manager", "role_details": "bringer of baked goods", "top": 1.63, "username": "cupcake1713", "wpm": 88},
+            {"beard": 10, "description": "Erik is our general manager and nerd herder. He has an awesome dog named Mog who can often be found around the office.", "favorite_subreddits": ["/r/fifthworldproblems"], "name": "Erik Martin", "new": 200810, "pyro": 6, "role": "General Manager", "role_details": "psychic detective", "scorpions": 9999, "top": 1.83, "username": "hueypriest", "wpm": 12},
+            {"beard": 3, "description": "Hacks reddit by day, races motorcycles by night. Or is it the other way around?", "favorite_subreddits": ["/r/motorcycles", "/r/forza", "/r/theoryofreddit", "/r/TheBook"], "name": "Logan Hanks", "new": 201106, "pyro": 3, "role": "Programmer", "role_details": "\\m/", "top": 1.83, "username": "intortus", "wpm": 9999},
+            {"beard": 0, "description": "", "favorite_subreddits": [], "name": "Jena Donlin", "new": 201101, "pyro": 1, "role": "Business Operations", "role_details": "", "top": 1.73, "username": "jenakalif", "wpm": 60, "zombies": 9999},
+            {"beard": 8, "cycling": 100, "description": "Sneezes chronically. Attempts to make things less annoying. Sometimes fails.", "favorite_subreddits": [], "name": "Keith Mitchell", "new": 201106, "pyro": 4, "role": "Programmer", "role_details": "annoyance reducer", "top": 1.82, "username": "kemitche"},
+            {"beard": 0, "cartman": 9999, "description": "When she's not thinking about second breakfast, Adriana makes sure ad campaigns go off smoothly.", "favorite_subreddits": ["/r/funny", "/r/fffffffuuuuuuuuuuuu", "/r/dubstep"], "name": "Adriana Gadala-Maria", "new": 201106, "pyro": 9, "role": "Digital Sales Planner", "role_details": "ad keeper", "top": 1.65, "username": "kirbyrules", "wpm": 72},
+            {"beard": 0, "description": "Deals with people so they don't have to.", "favorite_subreddits": ["/r/skyrim", "/r/ladyboners", "/r/TodayILearned"], "name": "Kristine Smith", "new": 201104, "pyro": 8, "role": "Online Advertising Specialist", "role_details": "self serve guru", "top": 1.52, "username": "krispykrackers", "whales": 9999, "wpm": 70},
+            {"beard": 0, "description": "", "favorite_subreddits": [], "name": "Lia Navarro", "pyro": 0, "role": "", "role_details": "", "top": 1.7, "username": "pixelinaa"},
+            {"beard": 2, "description": "", "favorite_subreddits": ["/r/ultimate", "r/depthhub", "r/fifthworldpics", "r/eatsandwiches", "r/sanfrancisco"], "name": "Josh Wardle", "new": 201109, "pronunciation": 9999, "pyro": 1, "role": "", "role_details": "erstwhile gremlin", "top": 1.82, "username": "powerlanguage"},
+            {"beard": 0, "description": "Handles corporate things.", "favorite_subreddits": ["/r/iama", "/r/madmen", "/r/feminisms"], "giants": 9999, "name": "Rebecca Eisenberg", "new": 201202, "pyro": 8, "role": "General Counsel", "role_details": "bounty hunter", "top": 1.63, "username": "rebecalyn", "wpm": 101},
+            {"beard": 1, "description": "Our personal puertorrique&#241;o pyromaniac pilot. The best days for him involve home made sangria, wrangling servers, and plenty of small fires.", "favorite_subreddits": ["/r/aviation", "/r/aww", "/r/iama"], "name": "Ricky Ramirez", "new": 201109, "pyro": 10, "role": "Systems Administrator", "role_details": "reboot master", "top": 1.65, "username": "rram", "wpm": 60},
+            {"beard": 0, "description": "Valerie drinks a lot of coffee and writes code. She believes almost anything can be improved by adding robots.", "favorite_subreddits": ["/r/depthhub", "/r/foodforthought", "/r/dataisbeautiful"], "mornings": 9999, "name": "Valerie Hajdik", "new": 201204, "pyro": 8, "role": "Programmer", "role_details": "generalist", "top": 1.7, "username": "shlurbee", "wpm": 109},
+            {"beard": 9, "description": "Neil tirelessly torches troublemakers in TF2. When he's not doing that he writes code. For a time, he was the only programmer at reddit.", "favorite_subreddits": ["/r/dogs", "/r/truetf2", "/r/boardgames"], "name": "Neil Williams", "new": 201011, "pings": 1, "pyro": 3, "role": "Lead Programmancer", "role_details": "mm mhm mmm!!", "top": 1.72, "username": "spladug", "wpm": 111},
+            {"beard": 0, "description": "what is this i don't even", "favorite_subreddits": [], "name": "Yishan Wong", "new": 201202, "pyro": 1, "rabbits": 3, "role": "CEO", "role_details": "sparklepants", "top": 1.74, "username": "yishan", "wpm": 91},
         ]
 
         alumni = [
@@ -148,7 +176,7 @@ class AboutController(RedditController):
              {'username': 'raldi', 'new': 4},
         ]
 
-        content = Team(team, alumni, sorts)
+        content = Team(team, alumni, sorts, extra_sorts)
         return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team'), content).render()
 
     def GET_postcards(self):

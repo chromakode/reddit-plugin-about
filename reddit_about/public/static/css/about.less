@@ -556,6 +556,10 @@
         background: white;
         z-index: 10;
         width: @page-width;
+
+        .hidden-sort {
+            display: none;
+        }
     }
 
     .people-grid {
@@ -656,7 +660,7 @@
             margin-left: -@arrow-size - @spacing;
         }
 
-        div, p {
+        .top, .description, .etc {
             padding: 10px 30px;
         }
 
@@ -691,6 +695,7 @@
         }
 
         .name {
+            display: block;
             font-size: 22px;
             font-weight: bold;
             letter-spacing: -.05em;
@@ -699,11 +704,29 @@
         .role {
             color: gray;
             font-weight: bold;
-            margin-left: .5em;
         }
 
         .description {
             background:  #e7f3ff;
+        }
+
+        .favorite-subreddits {
+            font-size: .85em;
+            margin-top: .75em;
+            opacity: .75;
+
+            span {
+                white-space: nowrap;
+            }
+
+            ul {
+                display: inline;
+
+                li {
+                    display: inline;
+                    margin-left: .5em;
+                }
+            }
         }
 
         a {

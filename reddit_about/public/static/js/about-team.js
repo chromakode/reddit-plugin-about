@@ -27,7 +27,9 @@ DropdownView = Backbone.View.extend({
             $choice = this.$('.drop-choices .choice-' + choice)
 
         this.$('.drop-choices .selected').removeClass('selected')
-        $choice.addClass('selected')
+        $choice
+            .addClass('selected')
+            .removeClass('hidden-sort')
         this.$('.dropdown .selected').text($choice.text())
         return this
     },
@@ -74,8 +76,11 @@ PersonDetailsPopup = Backbone.View.extend({
     },
 
     template: _.template(
-         '<button class="close">x</button><div class="top"><strong class="name"><%= d.name %></strong> <em class="role"><%= d.role %></em></div>'
-        +'<p class="description"><%= d.description %></p>'
+         '<button class="close">x</button><div class="top"><strong class="name"><%= d.name %></strong><em class="role"><%= d.role %></em></div>'
+        +'<div class="description">'
+            +'<p><%= d.description %></p>'
+            +'<div class="favorite-subreddits"><span>favorite subreddits:</span><ul></ul></div>'
+        +'</div>'
         +'<div class="etc"><a href="http://www.reddit.com/user/<%= d.username %>" target="_blank">reddit.com/user/<%= d.username %></a></div>'
     ),
 
@@ -94,6 +99,14 @@ PersonDetailsPopup = Backbone.View.extend({
 
     render: function() {
         this.$el.empty().append(this.template(this.model.toJSON()))
+        var favorite_srs = this.$('.favorite-subreddits ul')
+        _.each(this.model.get('favorite_subreddits'), function(sr) {
+            $('<li>').append(
+                $('<a>')
+                    .attr('href', sr)
+                    .text(sr)
+            ).appendTo(favorite_srs)
+        })
     },
 
     position: function() {
