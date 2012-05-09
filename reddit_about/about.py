@@ -27,7 +27,7 @@ class AboutPage(BoringPage):
             NavButton(_('about reddit'), '/'),
             NavButton(_('team'), '/team'),
             NavButton(_('postcards'), '/postcards'),
-            NavButton(_('media'), '/media'),
+            NavButton(_('alien'), '/alien'),
             #NavButton(_('guide'), '/guide')
         ]
         about_menu = NavMenu(about_buttons, type='tabmenu', base_path='/about/', css_class='about-menu')
@@ -57,6 +57,9 @@ class Team(Templated):
         self.sort_menu = NavMenu(sort_buttons, title=_('sorted by'), base_path=request.path, type='lightdrop', default='#sort/random')
 
 class Postcards(Templated):
+    pass
+
+class AlienMedia(Templated):
     pass
 
 @add_controller
@@ -153,8 +156,19 @@ class AboutController(RedditController):
         content = Postcards()
         return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.') % postcard_count, _('postcards'), content).render()
 
-    def GET_media(self):
-        return AboutPage('about-media', _('I also do birthday parties.'), _('media')).render()
+    def GET_alien(self):
+        colors = (
+            ('orangered', '#ff5700'),
+            ('eye color', '#ff4500'),
+            ('upvote', '#ff8b60'),
+            ('neutral', '#c6c6c6'),
+            ('downvote', '#9494ff'),
+            ('light bg', '#eff7ff'),
+            ('header', '#cee3f8'),
+            ('ui text', '#336699'),
+        )
+        content = AlienMedia(colors=colors)
+        return AboutPage('about-alien', _('I also do birthday parties.'), _('the alien'), content).render()
 
     def GET_guide(self):
         return AboutPage('about-guide', _('new to reddit? welcome.'), _('guide')).render()
