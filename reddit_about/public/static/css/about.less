@@ -942,7 +942,7 @@
 
         .color {
             display: inline-block;
-            margin: (@inner-width - @swatch-size * @per-line) / @per-line / 2;
+            margin: floor((@inner-width - @swatch-size * @per-line) / @per-line / 2);
             text-align: right;
 
             .swatch {
