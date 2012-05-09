@@ -76,7 +76,10 @@ PersonDetailsPopup = Backbone.View.extend({
     },
 
     template: _.template(
-         '<button class="close">x</button><div class="top"><strong class="name"><%= d.name %></strong><em class="role"><%= d.role %></em></div>'
+         '<button class="close">x</button><div class="top">'
+            +'<strong class="name"><%= d.name %></strong>'
+            +'<em class="role" title="<%= d.role_details %>"><%= d.role %></em>'
+        +'</div>'
         +'<div class="description">'
             +'<p><%= d.description %></p>'
             +'<div class="favorite-subreddits"><span>favorite subreddits:</span><ul></ul></div>'
