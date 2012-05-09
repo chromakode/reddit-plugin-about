@@ -7,6 +7,7 @@ _.extend(_.templateSettings, {
 $(function() {
     var page = $('.content.about-page')
     if (page) {
-        r.about.pages[page.attr('id')]()
+        var init = init = r.about.pages[page.attr('id')]
+        if (init) { init() }
     }
 })
