@@ -137,15 +137,15 @@ PersonDetailsPopup = Backbone.View.extend({
         this.$el.show()
 
         this.targetView.$el.addClass('focused')
-        this.trigger('show')
+        this.trigger('show', model)
     },
 
     hide: function() {
         if (this.targetView) {
             this.targetView.$el.removeClass('focused')
+            this.trigger('hide', this.model)
         }
         this.$el.hide()
-        this.trigger('hide')
         this.model = null
         this.targetView = null
     },
@@ -186,12 +186,14 @@ PeopleGridView = GridView.extend({
         })
     },
 
-    focus: function() {
+    focus: function(model) {
         this.$el.addClass('focusing')
+        $('.content').addClass('focusing-' + model.id)
     },
 
-    unfocus: function() {
+    unfocus: function(model) {
         this.$el.removeClass('focusing')
+        $('.content').removeClass('focusing-' + model.id)
     }
 })
 

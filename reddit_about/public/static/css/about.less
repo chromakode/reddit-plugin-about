@@ -730,6 +730,26 @@
             text-decoration: underline;
         }
     }
+
+    &.focusing-alienth {
+        &:after {
+            content: '';
+            display: block;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: black;
+            opacity: .55;
+            z-index: 900;
+        }
+
+        .alienth, #person-overlay {
+            .transition(all, 0s);
+            z-index: 901;
+        }
+    }
 }
 
 #about-postcards {
