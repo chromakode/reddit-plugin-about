@@ -167,11 +167,11 @@ var PostcardInfoView = PostcardOverlayView.extend({
     updateMap: function(zoom) {
         this.$('.maplink').attr('href', mapURL({
             lat: this.model.get('latitude'),
-            long: this.model.get('longitude')
+            'long': this.model.get('longitude')
         }))
         this.$('.map').attr('src', mapImageURL({
             lat: this.model.get('latitude'),
-            long: this.model.get('longitude'),
+            'long': this.model.get('longitude'),
             width: 85,
             height: 85,
             zoom: zoom
