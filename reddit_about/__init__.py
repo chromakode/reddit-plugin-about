@@ -20,7 +20,7 @@ class About(Plugin):
             'lib/modernizr.custom.3d.js',
             'lib/underscore-1.3.3.js',
             'lib/backbone-0.9.2.js',
-            'utils.js',
+            'about-utils.js',
             'slideshow.js',
             'timeline.js',
             'grid.js',
