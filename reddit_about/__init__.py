@@ -28,6 +28,7 @@ class About(Plugin):
             'about-main.js',
             'about-team.js',
             'about-postcards.js',
+            prefix = 'about/',
         )
     }
 
