@@ -14,7 +14,10 @@ class About(Plugin):
     }
 
     js = {
-        'less': Module('lib/less-1.3.0.min.js', should_compile=False),
+        'less': Module('lib/less-1.3.0.min.js',
+            prefix='about/',
+            should_compile=False
+        ),
 
         'about': Module('about.js',
             'lib/modernizr.custom.3d.js',
@@ -28,7 +31,7 @@ class About(Plugin):
             'about-main.js',
             'about-team.js',
             'about-postcards.js',
-            prefix = 'about/',
+            prefix='about/',
         )
     }
 
