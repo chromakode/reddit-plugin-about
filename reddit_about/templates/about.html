@@ -68,18 +68,22 @@
 <div class="inner">
   <div class="stat">
     <div>${_('reddit currently powers')}</div>
-    <div class="value">${format_number(thing.stats['active_communities'])}</div>
-    <div class="unit"><span class="metric" title="${_('communities with a post or comment in the past 24 hours')}">${_('active communities')}</span></div>
+    <div class="value">${format_number(thing.stats['subreddits_active_past_week'])}</div>
+    <div class="unit"><span class="metric" title="${_('communities with a post or comment in the past week')}">${_('active communities')}</span></div>
   </div>
   <div class="stat">
     <div>${_('consisting of over')}</div>
-    <div class="value">${format_number(thing.stats['active_accounts'])}</div>
-    <div class="unit"><span class="metric" title="${_('accounts that have accessed reddit in the past 24 hours')}">${_('active redditors')}</span></div>
+    <div class="value">${format_number(thing.stats['redditors_visited_past_month'])}</div>
+    <div class="unit"><span class="metric" title="${_('logged-in visitors over the past 30 days')}">${_('active redditors')}</span></div>
   </div>
   <div class="stat">
-    <img class="map mock" src="${thing.stats['country_map']}" alt="country map" />
+    <div>${_('casting over')}</div>
+    <div class="value">${format_number(thing.stats["vote_count_past_day"])}</div>
+    <div class="unit">${_('votes today')}</div>
+  </div>
+  <div class="stat">
     <div>${_('redditors hail from over')}</div>
-    <div class="value">${format_number(thing.stats["country_count"])}</div>
+    <div class="value">${format_number(thing.stats["country_count_past_month"])}</div>
     <div class="unit">${_('different countries')}</div>
   </div>
 </div>
