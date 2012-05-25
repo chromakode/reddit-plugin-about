@@ -258,8 +258,8 @@ class AboutController(RedditController):
         images = []
         for image_link in image_links:
             image = self.image_title_re.match(image_link.title).groupdict()
-            image['src'] = image_link.slideshow_src
             image['url'] = image_link.url
+            image['src'] = getattr(image_link, 'slideshow_src', image_link.url)
             image['author_url'] = getattr(image_link, 'author_url', image['url'])
             image['via'] = image['via'] or image_link.author.name
             image['via_url'] = '/user/' + image['via']
