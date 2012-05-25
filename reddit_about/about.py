@@ -80,7 +80,7 @@ class AboutController(RedditController):
         quote = self._get_quote()
         images = self._get_images()
 
-        stats = g.memcache.get('about_reddit_stats')
+        stats = g.memcache.get('about_reddit_stats', None)
 
         events = [
             {'date': localdate(2005, 6, 23), 'class': 'org important', 'title': 'reddit goes live', 'url': 'http://www.flickr.com/photos/33809408@N00/315068778/'},

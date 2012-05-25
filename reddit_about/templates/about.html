@@ -65,6 +65,7 @@
   <div class="communities">${_md('**anyone can create a community** (called "subreddits"). each subreddit is independent and moderated by a team of volunteers.')}</div>
   <div class="opensource">${_md('**reddit is open source**. community members are constantly tinkering and contributing features, bug fixes, and translations back to the site.')}</div>
 </div>
+%if thing.stats:
 <h2>${_('stats at a glance')}</h2>
 <div class="inner">
   <div class="stat">
@@ -88,6 +89,7 @@
     <div class="unit">${_('votes')}</div>
   </div>
 </div>
+%endif
 <h2>${_('history')}</h2>
 <div id="history" class="inner">
   <span class="bglabel org">org</span>
