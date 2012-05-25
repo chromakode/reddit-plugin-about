@@ -67,18 +67,18 @@
 <h2>${_('stats at a glance')}</h2>
 <div class="inner">
   <div class="stat">
-    <div>${_('today, reddit powered')}</div>
+    <div>${_('today, reddit powers')}</div>
     <div class="value">${format_number(thing.stats['subreddits_active_past_day'])}</div>
     <div class="unit"><span class="metric" title="${_('communities with a post or comment in the past day')}">${_('active communities')}</span></div>
   </div>
   <div class="stat">
     <div>${_('consisting of over')}</div>
-    <div class="value">${format_number(thing.stats['redditors_visited_past_day'])}</div>
-    <div class="unit"><span class="metric" title="${_('logged-in redditors over the past day')}">${_('active redditors')}</span></div>
+    <div class="value">${format_number(thing.stats['redditors_visited_yesterday'])}</div>
+    <div class="unit"><span class="metric" title="${_('logged-in redditors yesterday')}">${_('active redditors')}</span></div>
   </div>
   <div class="stat">
     <div>${_('hailing from over')}</div>
-    <div class="value">${format_number(thing.stats["country_count_past_day"])}</div>
+    <div class="value">${format_number(thing.stats["country_count_yesterday"])}</div>
     <div class="unit">${_('different countries')}</div>
   </div>
   <div class="stat">

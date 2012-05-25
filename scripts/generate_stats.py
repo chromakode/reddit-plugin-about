@@ -75,7 +75,7 @@ def ga_stats(config):
 
     today = datetime.date.today()
     start_date = (today - datetime.timedelta(days=2)).strftime('%Y-%m-%d')
-    end_date = today.strftime('%Y-%m-%d')
+    end_date = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     visitors = analytics.data().ga().get(
         ids='ga:24573069',
         start_date=start_date,
@@ -85,8 +85,8 @@ def ga_stats(config):
         filters='ga:customVarValue3=@loggedin'
     ).execute()
 
-    stats['country_count_past_day'] = visitors['totalResults']
-    stats['redditors_visited_past_day'] = int(visitors['totalsForAllResults']['ga:visitors'])
+    stats['country_count_yesterday'] = visitors['totalResults']
+    stats['redditors_visited_yesterday'] = int(visitors['totalsForAllResults']['ga:visitors'])
     return stats
 
 def update_stats(config):
