@@ -1,22 +1,38 @@
 import sys
-import calendar
 import time
 import datetime
 import httplib2
 import ConfigParser
 import sqlalchemy as sa
+from collections import defaultdict
 from pylons import g
 from r2.models import Account, Link, Comment, Vote
-from r2.lib.db.tdb_sql import get_rel_table
-from r2.lib.utils import timeago, fetch_things2
+from r2.lib.db.tdb_sql import get_thing_table, get_rel_table
+from r2.lib.db.operators import asc
+from r2.lib.count import get_active_sr_count
+from r2.lib.utils import timeago
 
 def subreddit_stats(config):
-    def sr_ids(query):
-        return set(thing.sr_id for thing in fetch_things2(query))
+    sr_counts = defaultdict(int)
+    for kind in (Link, Comment):
+        thing_table, data_table = get_thing_table(kind._type_id)
+        first_id = list(kind._query(kind.c._date > timeago('3 day'), sort=asc('_date'), limit=1))
+        if not first_id:
+            continue
+        else:
+            first_id = first_id[0]._id
 
-    link_srs = sr_ids(Link._query(Link.c._date > timeago('1 week'), data=True))
-    comment_srs = sr_ids(Comment._query(Comment.c._date > timeago('1 week'), data=True))
-    return {'subreddits_active_past_week': len(link_srs | comment_srs)}
+        q = sa.select([data_table.c.value, sa.func.count(data_table.c.value)],
+                (data_table.c.thing_id > first_id)
+                    & (data_table.c.key == 'sr_id')
+                    & (thing_table.c.thing_id == data_table.c.thing_id)
+                    & (thing_table.c.spam == False),
+                group_by=data_table.c.value)
+
+        for sr_id, count in q.execute():
+            sr_counts[sr_id] += count
+
+    return {'subreddits_active_past_day': len(list(count for count in sr_counts.itervalues() if count > 5))}
 
 def vote_stats(config):
     stats = {}
@@ -59,8 +75,7 @@ def ga_stats(config):
     analytics = build("analytics", "v3", http=http)
 
     today = datetime.date.today()
-    first_day, last_day = calendar.monthrange(today.year, today.month)
-    start_date = (today - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+    start_date = (today - datetime.timedelta(days=2)).strftime('%Y-%m-%d')
     end_date = today.strftime('%Y-%m-%d')
     visitors = analytics.data().ga().get(
         ids='ga:24573069',
@@ -71,8 +86,8 @@ def ga_stats(config):
         filters='ga:customVarValue3=@loggedin'
     ).execute()
 
-    stats['country_count_past_month'] = visitors['totalResults']
-    stats['redditors_visited_past_month'] = int(visitors['totalsForAllResults']['ga:visitors'])
+    stats['country_count_past_day'] = visitors['totalResults']
+    stats['redditors_visited_past_day'] = int(visitors['totalsForAllResults']['ga:visitors'])
     return stats
 
 def update_stats(config):
@@ -87,6 +102,7 @@ def update_stats(config):
     run_stats(subreddit_stats)
     run_stats(vote_stats)
     run_stats(ga_stats)
+    print >> sys.stderr, 'finished:', stats
     g.memcache.set('about_reddit_stats', stats)
 
 def main(config_file):
