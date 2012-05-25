@@ -16,7 +16,7 @@ def subreddit_stats(config):
     sr_counts = defaultdict(int)
     for kind in (Link, Comment):
         thing_table, data_table = get_thing_table(kind._type_id)
-        first_id = list(kind._query(kind.c._date > timeago('3 day'), sort=asc('_date'), limit=1))
+        first_id = list(kind._query(kind.c._date > timeago('1 day'), sort=asc('_date'), limit=1))
         if not first_id:
             continue
         else:
