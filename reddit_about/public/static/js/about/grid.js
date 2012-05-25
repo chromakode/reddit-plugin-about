@@ -13,8 +13,10 @@ GridView = Backbone.View.extend({
     },
 
     addOne: function(model) {
-        var view = this.createItemView(model)
-        this.itemViews[model.id] = view
+        if (!this.itemViews[model.id]) {
+            var view = this.createItemView(model)
+            this.itemViews[model.id] = view
+        }
     },
 
     addAll: function() {
