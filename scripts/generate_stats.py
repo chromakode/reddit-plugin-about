@@ -9,7 +9,6 @@ from pylons import g
 from r2.models import Account, Link, Comment, Vote
 from r2.lib.db.tdb_sql import get_thing_table, get_rel_table
 from r2.lib.db.operators import asc
-from r2.lib.count import get_active_sr_count
 from r2.lib.utils import timeago
 
 def subreddit_stats(config):
