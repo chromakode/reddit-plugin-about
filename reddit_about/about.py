@@ -5,73 +5,15 @@ from os import path
 from itertools import chain
 from datetime import datetime
 
-from pylons import request, g
+from pylons import g
 from pylons.i18n import _
 
 from r2.controllers import add_controller
 from r2.controllers.reddit_base import RedditController
 from r2.models import *
 from r2.lib.db.queries import CachedResults
-from r2.lib.pages import Templated, BoringPage
-from r2.lib.menus import NavMenu, NavButton, OffsiteButton
 from r2.lib.template_helpers import comment_label
-
-
-class AboutPage(BoringPage):
-    css_class = 'about-page'
-
-    def __init__(self, content_id=None, title_msg=None, pagename=None, content=None, **kw):
-        BoringPage.__init__(self, pagename or _('about reddit'), show_sidebar=False, content=content, **kw)
-        self.content_id = content_id
-        self.title_msg = title_msg
-
-    def content(self):
-        about_buttons = [
-            NavButton(_('about reddit'), '/'),
-            NavButton(_('team'), '/team'),
-            NavButton(_('postcards'), '/postcards'),
-            NavButton(_('alien'), '/alien'),
-            #NavButton(_('guide'), '/guide')
-        ]
-        about_menu = NavMenu(about_buttons, type='tabmenu', base_path='/about/', css_class='about-menu')
-        return self.content_stack([AboutTitle(self.title_msg), about_menu, self._content])
-
-
-class AboutTitle(Templated):
-    def __init__(self, message):
-        Templated.__init__(self)
-        self.message = message
-
-
-class About(Templated):
-    pass
-
-
-class Team(Templated):
-    def __init__(self, team, alumni, sorts, extra_sorts):
-        Templated.__init__(self, team=team, alumni=alumni, sorts=sorts + extra_sorts)
-
-        sort_buttons = []
-        extra_sort_index = random.randint(len(sorts), len(self.sorts)-1)
-        for idx, sort in enumerate(self.sorts):
-            css_class = 'choice-'+sort['id']
-            if sort in extra_sorts and idx != extra_sort_index:
-                css_class += ' hidden-sort'
-            button = OffsiteButton(sort['title'], '#sort/'+sort['id'], css_class=css_class)
-            sort_buttons.append(button)
-        self.sort_menu = NavMenu(sort_buttons, title=_('sorted by'), base_path=request.path, type='lightdrop', default='#sort/random')
-
-        # The caching check won't catch the hidden-sort classes
-        self.sort_menu.cachable = False
-
-
-class Postcards(Templated):
-    pass
-
-
-class AlienMedia(Templated):
-    pass
-
+from pages import AboutPage, AboutTitle, About, Team, Postcards, AlienMedia
 
 def parse_date_text(date_str):
     if not date_str:
