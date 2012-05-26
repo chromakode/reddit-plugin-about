@@ -40,3 +40,4 @@ class About(Plugin):
 
     def load_controllers(self):
         from about import AboutController
+        AboutController.load_data()
