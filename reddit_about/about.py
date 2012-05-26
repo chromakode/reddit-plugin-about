@@ -9,6 +9,7 @@ from pylons.i18n import _
 from r2.controllers import add_controller
 from r2.controllers.reddit_base import RedditController
 from r2.models import *
+from r2.lib.db.queries import CachedResults
 from r2.lib.pages import Templated, BoringPage
 from r2.lib.menus import NavMenu, NavButton, OffsiteButton
 from r2.lib.template_helpers import comment_label
@@ -219,6 +220,18 @@ class AboutController(RedditController):
 
         return parsed_date
 
+    def _get_hot_posts(self, sr, count, shuffle=False, filter=None):
+        links = sr.get_links('hot', 'all')
+        assert type(links) is CachedResults
+        ids = list(links)
+        if shuffle:
+            random.shuffle(ids)
+        builder = IDBuilder(ids, skip=True,
+                            keep_fn=filter if filter is not None
+                                    else lambda x: x,
+                            num=count)
+        return builder.get_items()[0]
+
     quote_title_re = re.compile(r'''
         ^
         "(?P<body>[^"]+)"\s*                # "quote"
@@ -230,12 +243,8 @@ class AboutController(RedditController):
 
     def _get_quote(self):
         sr = Subreddit._by_name(g.about_sr_quotes)
-        ids = list(sr.get_links('hot', 'all'))
-        random.shuffle(ids)
-        builder = IDBuilder(ids, skip=True,
-                            keep_fn=lambda x: self.quote_title_re.match(x.title),
-                            num=1)
-        quote_link = builder.get_items()[0][0]
+        quote_link = self._get_hot_posts(sr, count=1, shuffle=True,
+            filter=lambda x: self.quote_title_re.match(x.title))[0]
 
         quote = self.quote_title_re.match(quote_link.title).groupdict()
         quote['date'] = self._parse_title_date(quote['date']) or quote_link._date
@@ -257,12 +266,10 @@ class AboutController(RedditController):
 
     def _get_images(self):
         sr = Subreddit._by_name(g.about_sr_images)
-        ids = list(sr.get_links('hot', 'all'))
-        builder = IDBuilder(ids, skip=True,
-                            keep_fn = lambda x: self.image_title_re.match(x.title)
-                                                and x.score >= g.about_images_min_score,
-                            num=g.about_images_count)
-        image_links = builder.get_items()[0]
+        image_links = self._get_hot_posts(sr, count=g.about_images_count,
+            filter=lambda x: self.image_title_re.match(x.title)
+                             and x.score >= g.about_images_min_score)
+
         images = []
         for image_link in image_links:
             image = self.image_title_re.match(image_link.title).groupdict()
