@@ -209,11 +209,10 @@ class AboutController(RedditController):
         if not date_str:
             return None
 
-        parsed_date = None
         try:
             parsed_date = datetime.strptime(date_str, '%m/%d/%y')
         except ValueError:
-            pass
+            parsed_date = None
         else:
             # Fudge timezone to g.tz
             parsed_date = parsed_date.replace(tzinfo=g.tz)
