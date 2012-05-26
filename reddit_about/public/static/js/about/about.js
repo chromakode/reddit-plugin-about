@@ -1,5 +1,7 @@
 r.about = { pages: {} }
 
+// Set the Underscore template data object name to 'd'.
+// see http://documentcloud.github.com/underscore/#template
 _.extend(_.templateSettings, {
     variable: 'd'
 })
