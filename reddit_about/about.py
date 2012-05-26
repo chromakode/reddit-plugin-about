@@ -1,19 +1,22 @@
+import re
+import random
+from itertools import chain
+from datetime import datetime
+
 from pylons import request, g
-from r2.controllers import add_controller
 from pylons.i18n import _
+
+from r2.controllers import add_controller
 from r2.controllers.reddit_base import RedditController
 from r2.models import *
 from r2.lib.pages import Templated, BoringPage
 from r2.lib.menus import NavMenu, NavButton, OffsiteButton
 from r2.lib.template_helpers import comment_label
 
-import re
-import random
-from itertools import chain
-from datetime import datetime
 
 def localdate(*args):
     return datetime(*args, tzinfo=g.tz)
+
 
 class AboutPage(BoringPage):
     css_class = 'about-page'
@@ -34,10 +37,12 @@ class AboutPage(BoringPage):
         about_menu = NavMenu(about_buttons, type='tabmenu', base_path='/about/', css_class='about-menu')
         return self.content_stack([AboutTitle(self.title_msg), about_menu, self._content])
 
+
 class AboutTitle(Templated):
     def __init__(self, message):
         Templated.__init__(self)
         self.message = message
+
 
 class About(Templated):
     def __init__(self, quote, images, stats, events, sites):
@@ -47,6 +52,7 @@ class About(Templated):
         self.stats = stats
         self.events = events
         self.sites = sites
+
 
 class Team(Templated):
     def __init__(self, team, alumni, sorts, extra_sorts):
@@ -68,11 +74,14 @@ class Team(Templated):
         # The caching check won't catch the hidden-sort classes
         self.sort_menu.cachable = False
 
+
 class Postcards(Templated):
     pass
 
+
 class AlienMedia(Templated):
     pass
+
 
 @add_controller
 class AboutController(RedditController):
