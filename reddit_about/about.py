@@ -75,8 +75,7 @@ class AboutController(RedditController):
         if shuffle:
             random.shuffle(ids)
         builder = IDBuilder(ids, skip=True,
-                            keep_fn=filter if filter is not None
-                                    else lambda x: x,
+                            keep_fn=filter,
                             num=count)
         return builder.get_items()[0]
 
