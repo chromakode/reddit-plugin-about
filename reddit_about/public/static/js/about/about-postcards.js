@@ -507,7 +507,6 @@ var PostcardGridView = Backbone.View.extend({
 r.about.pages['about-postcards'] = function() {
     $('.abouttitle h1').hide()
 
-    // FIXME var
     var postcards = new PostcardCollection,
         grid = new PostcardGridView({
             el: $('#postcards'),
