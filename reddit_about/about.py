@@ -10,7 +10,8 @@ from pylons.i18n import _
 
 from r2.controllers import add_controller
 from r2.controllers.reddit_base import RedditController
-from r2.models import *
+from r2.models import Subreddit
+from r2.models.builder import IDBuilder
 from r2.lib.db.queries import CachedResults
 from r2.lib.template_helpers import comment_label
 from pages import AboutPage, AboutTitle, About, Team, Postcards, AlienMedia
