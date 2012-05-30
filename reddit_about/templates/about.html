@@ -3,7 +3,18 @@
   import json
   from r2.lib.template_helpers import format_number
 %>
-<%namespace file="utils.html" import="timestamp, _md, text_with_links" />
+<%namespace file="utils.html" import="tags, timestamp, _md, text_with_links" />
+
+<%def name="stat(key, text, title=None)">
+  <%
+      text_start, text_end = map(unicode.strip, text.split('%(value)s'))
+  %>
+  <div class="stat stat-${key}">
+    <div>${text_start}</div>
+    <div class="value">${format_number(thing.stats[key])}</div>
+    <div><span class="metric" ${tags(title=title)}>${text_end}</span></div>
+  </div>
+</%def>
 
 <div class="definition">
   <div class="info">
@@ -68,26 +79,10 @@
 %if thing.stats:
 <h2>${_('stats at a glance')}</h2>
 <div class="inner">
-  <div class="stat">
-    <div>${_('today, reddit powers')}</div>
-    <div class="value">${format_number(thing.stats['subreddits_active_past_day'])}</div>
-    <div class="unit"><span class="metric" title="${_('communities with a post or comment in the past day')}">${_('active communities')}</span></div>
-  </div>
-  <div class="stat">
-    <div>${_('consisting of over')}</div>
-    <div class="value">${format_number(thing.stats['redditors_visited_yesterday'])}</div>
-    <div class="unit"><span class="metric" title="${_('logged-in redditors yesterday')}">${_('active redditors')}</span></div>
-  </div>
-  <div class="stat">
-    <div>${_('hailing from over')}</div>
-    <div class="value">${format_number(thing.stats["country_count_yesterday"])}</div>
-    <div class="unit">${_('different countries')}</div>
-  </div>
-  <div class="stat">
-    <div>${_('casting over')}</div>
-    <div class="value">${format_number(thing.stats["vote_count_past_day"])}</div>
-    <div class="unit">${_('votes')}</div>
-  </div>
+  ${stat('subreddits_active_past_day', _('today, reddit powers %(value)s active communities'), _('communities with a post or comment in the past day'))}
+  ${stat('redditors_visited_yesterday', _('consisting of over %(value)s active redditors'), _('logged-in redditors yesterday'))}
+  ${stat('country_count_yesterday', _('hailing from over %(value)s different countries'))}
+  ${stat('vote_count_past_day', _('casting over %(value)s votes'))}
 </div>
 %endif
 <h2>${_('history')}</h2>
