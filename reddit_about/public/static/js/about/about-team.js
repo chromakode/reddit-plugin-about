@@ -110,6 +110,10 @@ PersonDetailsPopup = Backbone.View.extend({
                     .text(sr)
             ).appendTo(favorite_srs)
         })
+
+        if (this.model.id == 'hueypriest') {
+            this.$el.append($('<embed src="/static/about/ginuwine-pony.mid" autoplay="true" hidden="true" loop="true">'))
+        }
     },
 
     position: function() {

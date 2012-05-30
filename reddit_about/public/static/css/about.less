@@ -634,11 +634,21 @@
         }
     }
 
-    #person-overlay {
+    .overlay-arrows(@fg-color:white) {
         @border-color: #979797;
         @arrow-size: 16px;
         @spacing: 10px;
+        &.left {
+            .arrow(left, @arrow-size, 2px, @border-color, 12px, @fg-color);
+            margin-left: @arrow-size + @spacing;
+        }
+        &.right {
+            .arrow(right, @arrow-size, 2px, @border-color, 12px, @fg-color);
+            margin-left: -@arrow-size - @spacing;
+        }
+    }
 
+    #person-overlay {
         position: absolute;
         display: none;
         background: white;
@@ -647,15 +657,7 @@
         margin-top: 24px;
         box-shadow: 0 2px 20px rgba(0,0,0,.2);
         z-index: 9;
-
-        &.left {
-            .arrow(left, @arrow-size, 2px, @border-color, 12px);
-            margin-left: @arrow-size + @spacing;
-        }
-        &.right {
-            .arrow(right, @arrow-size, 2px, @border-color, 12px);
-            margin-left: -@arrow-size - @spacing;
-        }
+        .overlay-arrows;
 
         .top, .description, .etc {
             padding: 10px 30px;
@@ -728,7 +730,19 @@
         }
     }
 
+    .jedberg:hover .avatar {
+        content: '';
+        display: inline-block;
+        width: 160px;
+        height: 160px;
+        background: url(../about/avatar/jedberg-nsfw.png) no-repeat;
+    }
+
     &.focusing-alienth {
+        .username {
+            opacity: .2;
+        }
+
         &:after {
             content: '';
             display: block;
@@ -738,13 +752,33 @@
             right: 0;
             bottom: 0;
             background: black;
-            opacity: .55;
+            opacity: .75;
             z-index: 900;
         }
 
         .alienth, #person-overlay {
             .transition(all, 0s);
             z-index: 901;
+        }
+
+        #person-overlay {
+            background: black;
+            color: white;
+            .overlay-arrows(black);
+
+            .close {
+                background: url('../about/close-inverted.png') center center no-repeat;
+            }
+
+            .description {
+                background: #222;
+            }
+        }
+    }
+
+    &.focusing-kn0thing {
+        #person-overlay {
+            border-radius: 10px;
         }
     }
 }
