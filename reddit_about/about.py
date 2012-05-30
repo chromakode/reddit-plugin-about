@@ -1,6 +1,5 @@
 import re
 import random
-import json
 from os import path
 from itertools import chain
 from datetime import datetime
@@ -32,28 +31,16 @@ def parse_date_text(date_str):
 
 @add_controller
 class AboutController(RedditController):
-    @classmethod
-    def load_data(cls):
-        def load(name):
-            with open(path.join(path.dirname(__file__), 'data', name)) as f:
-                data = json.load(f)
-            return data
-        cls.timeline_data = load('timeline.json')
-        for idx, event in enumerate(cls.timeline_data):
-            cls.timeline_data[idx]['date'] = parse_date_text(event['date'])
-        cls.sites_data = load('sites.json')
-        cls.team_data = load('team.json')
-        cls.colors_data = load('colors.json')
-
     def GET_index(self):
         quote = self._get_quote()
         images = self._get_images()
         stats = g.memcache.get('about_reddit_stats', None)
-        content = About(quote=quote, images=images, stats=stats, events=self.timeline_data, sites=self.sites_data)
+        content = About(quote=quote, images=images, stats=stats,
+                        events=g.plugins['about'].timeline_data, sites=g.plugins['about'].sites_data)
         return AboutPage('about-main', _('we power awesome communities.'), _('about reddit'), content).render()
 
     def GET_team(self):
-        content = Team(**self.team_data)
+        content = Team(**g.plugins['about'].team_data)
         return AboutPage('about-team', _('we spend our days building reddit.'), _('about the reddit team'), content).render()
 
     def GET_postcards(self):
@@ -62,7 +49,7 @@ class AboutController(RedditController):
         return AboutPage('about-postcards', _('you\'ve sent us over %s postcards.') % postcard_count, _('postcards'), content).render()
 
     def GET_alien(self):
-        content = AlienMedia(colors=self.colors_data)
+        content = AlienMedia(colors=g.plugins['about'].colors_data)
         return AboutPage('about-alien', _('I also do birthday parties.'), _('the alien'), content).render()
 
     def GET_guide(self):

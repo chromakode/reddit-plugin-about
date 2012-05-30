@@ -1,3 +1,6 @@
+from os import path
+import json
+
 from r2.lib.plugin import Plugin
 from r2.lib.app_globals import ConfigValue
 from r2.lib.js import Module
@@ -39,5 +42,16 @@ class About(Plugin):
         mc('/about/:action', controller='about', conditions={'function':not_in_sr})
 
     def load_controllers(self):
-        from about import AboutController
-        AboutController.load_data()
+        def load(name):
+            with open(path.join(path.dirname(__file__), 'data', name)) as f:
+                data = json.load(f)
+            return data
+
+        from about import AboutController, parse_date_text
+        self.timeline_data = load('timeline.json')
+        for idx, event in enumerate(self.timeline_data):
+            self.timeline_data[idx]['date'] = parse_date_text(event['date'])
+        self.sites_data = load('sites.json')
+        self.team_data = load('team.json')
+        self.colors_data = load('colors.json')
+
