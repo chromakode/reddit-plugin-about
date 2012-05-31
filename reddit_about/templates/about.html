@@ -3,7 +3,7 @@
   import json
   from r2.lib.template_helpers import format_number
 %>
-<%namespace file="utils.html" import="tags, timestamp, _md, text_with_links" />
+<%namespace file="utils.html" import="timestamp, _md, text_with_links" />
 
 <%def name="stat(key, text, title=None)">
   <%
@@ -12,7 +12,13 @@
   <div class="stat stat-${key}">
     <div>${text_start}</div>
     <div class="value">${format_number(thing.stats[key])}</div>
-    <div><span class="metric" ${tags(title=title)}>${text_end}</span></div>
+    <div>
+    %if title:
+      <span class="metric" title="${title}">${text_end}</span>
+    %else:
+      ${text_end}
+    %endif
+    </div>
   </div>
 </%def>
 
