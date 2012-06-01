@@ -1,9 +1,9 @@
 <%!
   import locale
-  import json
   from r2.lib.template_helpers import format_number
 %>
 <%namespace file="utils.html" import="timestamp, _md, text_with_links" />
+<%namespace file="backbone_utils.html" import="backbone_collection"/>
 
 <%def name="stat(key, text, title=None)">
   <%
@@ -112,4 +112,4 @@
   %endfor
 </ul>
 
-<script>slideshowImages.reset(${unsafe(json.dumps(thing.images))})</script>
+${backbone_collection('slideshowImages', thing.images)}
