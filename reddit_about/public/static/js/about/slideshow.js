@@ -33,7 +33,7 @@ SlideshowView = Backbone.View.extend({
         this._image('prev', this._delta(-1))
         this._image('current', this.index)
         this._image('next', this._delta(1))
-        this.$('.current').text(this.index + 1)
+        this.$('.current-index').text(this.index + 1)
         this.$('.total').text(this.collection.length)
         return this
     },
