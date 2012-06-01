@@ -114,7 +114,6 @@ var PostcardOverlayView = Backbone.View.extend({
 
     hide: function() {
         this.$el.addClass('hide')
-        console.log('hide', this.el.className)
     },
 
     _position: function() {
