@@ -117,6 +117,10 @@ PersonDetailsPopup = Backbone.View.extend({
     },
 
     position: function() {
+        if (!this.targetView) {
+            return
+        }
+
         var avatar = this.targetView.$('.avatar'),
             personPos = avatar.offset(),
             parent = this.$el.parent(),
