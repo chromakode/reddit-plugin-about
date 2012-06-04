@@ -355,13 +355,14 @@ var PostcardView = Backbone.View.extend({
     render: function() {
         var thumb = this.model.get('images').small,
             front = thumb.front || {}
-        $(this.el).append(
-            $(this.make('img', {
-                src: baseURL + front.filename,
-                width: front.width,
-                height: front.height
-            })).css('margin-top', -front.height / 2)
-        )
+        this.$el
+            .append(
+                $(this.make('img', {
+                    src: baseURL + front.filename,
+                    width: front.width,
+                    height: front.height
+                })).css('margin-top', -front.height / 2))
+            .addClass('postcard-'+this.model.id)
         return this
     },
 
@@ -378,7 +379,9 @@ var PostcardsPlaceholderView = Backbone.View.extend({
 
     render: function() {
         var grid = this.options.parent
-        this.$el.css('height', Math.ceil(grid.collection.chunkSize / this.perLine) * this.lineHeight)
+        this.$el
+            .css('height', Math.ceil(grid.collection.chunkSize / this.perLine) * this.lineHeight)
+            .addClass('placeholder-'+this.model.id)
         return this
     }
 })
