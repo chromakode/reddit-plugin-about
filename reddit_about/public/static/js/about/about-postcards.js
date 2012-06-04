@@ -314,6 +314,14 @@ var PostcardZoomView = Backbone.View.extend({
         this.frontLeft = (this.maxWidth - images.front.width) / 2,
         this.frontTop = (this.maxHeight - images.front.height) / 2
 
+        // Scale and displace the .zoom plane to match the front face.
+        this.$('.zoom').css({
+            width: images.front.width,
+            height: images.front.height,
+            marginLeft: this.frontLeft,
+            marginTop: this.frontTop
+        })
+
         this.$('.front')
             .attr('width', images.front.width)
             .attr('height', images.front.height)
@@ -327,14 +335,6 @@ var PostcardZoomView = Backbone.View.extend({
                 left: (images.front.width - images.back.width) / 2,
                 top: (images.front.height - images.back.height) / 2
             })
-
-        // Scale and displace the .zoom plane to match the front face.
-        this.$('.zoom').css({
-            width: images.front.width,
-            height: images.front.height,
-            marginLeft: this.frontLeft,
-            marginTop: this.frontTop
-        })
 
         if (!keepImages) {
             this.$('.front').attr('src', baseURL + images.front.filename)
