@@ -23,7 +23,7 @@ class About(Plugin):
         ),
 
         'about': Module('about.js',
-            'lib/modernizr.custom.3d.js',
+            'lib/modernizr.custom.3d+shadow.js',
             'lib/underscore-1.3.3.js',
             'lib/backbone-0.9.2.js',
             'about-utils.js',

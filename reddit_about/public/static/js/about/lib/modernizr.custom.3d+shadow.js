@@ -1,5 +1,5 @@
 /* Modernizr 2.5.3 (Custom Build) | MIT & BSD
- * Build: http://www.modernizr.com/download/#-csstransforms3d-cssclasses-teststyles-testprop-testallprops-prefixes-domprefixes
+ * Build: http://www.modernizr.com/download/#-boxshadow-csstransforms3d-cssclasses-teststyles-testprop-testallprops-prefixes-domprefixes
  */
 ;
 
@@ -212,6 +212,9 @@ window.Modernizr = (function( window, document, undefined ) {
                  ,'csstransforms3d'  
     ]);
 
+    tests['boxshadow'] = function() {
+        return testPropsAll('boxShadow');
+    };
     tests['csstransforms3d'] = function() {
 
         var ret = !!testPropsAll('perspective');

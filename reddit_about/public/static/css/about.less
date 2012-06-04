@@ -800,8 +800,13 @@
             img {
                 position: relative;
                 top: 50%;
-                box-shadow: 0 0 4px #555;
+                background: url('../throbber.gif') center center no-repeat;
                 cursor: pointer;
+
+                box-shadow: 0 0 4px #555;
+                .no-boxshadow & {
+                    border: 1px solid #555;
+                }
             }
         }
 
