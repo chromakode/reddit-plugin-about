@@ -276,13 +276,18 @@ var PostcardZoomView = Backbone.View.extend({
     },
 
     render: function() {
-        this._resize('small')
+        this._changeSize('small')
+        this._scale()
         this._origPosition()
         return this
     },
 
+    currentImages: function() {
+        return this.model.get('images')[this.size]
+    },
+
     currentImage: function() {
-        return this.model.get('images')[this.size][this.currentSide]
+        return this.currentImages()[this.currentSide]
     },
 
     currentFacePosition: function() {
@@ -304,15 +309,19 @@ var PostcardZoomView = Backbone.View.extend({
         })
     },
 
-    _resize: function(size, keepImages) {
+    _changeSize: function(size) {
         this.size = size
-        var images = this.model.get('images')[size]
+        var images = this.currentImages()
 
         // Scale and center the images.
         this.maxWidth = Math.max(images.front.width, images.back.width),
         this.maxHeight = Math.max(images.front.height, images.back.height)
         this.frontLeft = (this.maxWidth - images.front.width) / 2,
         this.frontTop = (this.maxHeight - images.front.height) / 2
+    },
+
+    _scale: function(size, keepImages) {
+        var images = this.currentImages()
 
         // Scale and displace the .zoom plane to match the front face.
         this.$('.zoom').css({
@@ -352,13 +361,14 @@ var PostcardZoomView = Backbone.View.extend({
     },
 
     zoom: function() {
-        this._resize('full')
+        this._changeSize('full')
         this.position = {
             'left': ($(window).width() - this.maxWidth) / 2,
             'top': Math.max(this.$el.parent().position().top + this.topSpace,
                             $(window).scrollTop() + ($(window).height() - this.maxHeight) / 2)
         }
         this.$('.zoom').css(this.position)
+        this._scale()
         this.$el.addClass('zoomed')
         this.trigger('showcard')
         return this
@@ -366,8 +376,9 @@ var PostcardZoomView = Backbone.View.extend({
 
     unzoom: function() {
         this.trigger('hidecard')
-        this._resize('small', true)
+        this._changeSize('small')
         this._origPosition()
+        this._scale(true)
         this.$el.removeClass('flipped zoomed')
         _.delay(_.bind(function() {
             this.unbind()
