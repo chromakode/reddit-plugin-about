@@ -421,7 +421,7 @@ var PostcardGridView = Backbone.View.extend({
         }
 
         var index = this.collection.indexOf(model),
-            elBefore = this.$el.children().eq(index)
+            elBefore = this.$el.children().eq(index - 1)
         if (elBefore.length) {
             elBefore.after(view.render().el)
         } else {
