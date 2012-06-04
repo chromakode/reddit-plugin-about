@@ -1,6 +1,7 @@
 var baseURL = 'http://postcards.redditstatic.com/',
     mapURL = _.template('http://maps.google.com/?q=<%= d.lat %>,<%= d.long %>'),
-    mapImageURL = _.template('http://maps.googleapis.com/maps/api/staticmap?zoom=<%= d.zoom %>&size=<%= d.width %>x<%= d.height %>&sensor=false&markers=size:mid%7Ccolor:red%7C<%= d.lat %>,<%= d.long %>')
+    mapImageURL = _.template('http://maps.googleapis.com/maps/api/staticmap?zoom=<%= d.zoom %>&size=<%= d.width %>x<%= d.height %>&sensor=false&markers=size:mid%7Ccolor:red%7C<%= d.lat %>,<%= d.long %>'),
+    redditButtonURL = _.template('http://www.reddit.com/static/button/button2.html?sr=postcards&url=<%= d.url %>')
 
 Postcard = Backbone.Model.extend({})
 PostcardsPlaceholder = Backbone.Model.extend({})
@@ -199,6 +200,27 @@ var PostcardInfoView = PostcardOverlayView.extend({
     }
 })
 
+var PostcardRedditView = PostcardOverlayView.extend({
+    className: 'redditbutton',
+
+    render: function() {
+        var iframe = $('<iframe src="'+redditButtonURL({url: window.location})+'">')
+        iframe
+            .css('opacity', 0)
+            .load(function() {
+                iframe.css('opacity', 1)
+            })
+        this.$el.append(iframe)
+        return this
+    },
+
+    _target: function() {
+        var infopos = PostcardInfoView.prototype._target.apply(this)
+        infopos.top += 110
+        return infopos
+    }
+})
+
 var PostcardCloseView = PostcardOverlayView.extend({
     className: 'postcard-close',
     distanceThreshold: 0,
@@ -212,9 +234,7 @@ var PostcardCloseView = PostcardOverlayView.extend({
     },
 
     _target: function() {
-        var parent = this.options.parent,
-            parentPos = parent.currentFacePosition()
-
+        var parentPos = this.options.parent.currentFacePosition()
         return {
             left: parentPos.right,
             top: parentPos.top
@@ -242,6 +262,7 @@ var PostcardZoomView = Backbone.View.extend({
         )
 
         this.$el.append(new PostcardInfoView({model: this.model, parent: this}).render().el)
+        this.$el.append(new PostcardRedditView({parent: this}).render().el)
         this.$el.append(new PostcardCloseView({parent: this, zoomer: this.options.zoomer}).render().el)
 
         var smallImages = this.model.get('images').small

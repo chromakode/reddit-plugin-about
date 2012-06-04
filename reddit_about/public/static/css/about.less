@@ -903,13 +903,24 @@
             padding: 3px;
             text-align: center;
             background: rgba(60,60,60,.8);
-            border-radius: 3px;
+            border-radius: 4px;
             opacity: .9;
             z-index: 9;
 
             .date {
                 color: white;
                 font: 10px sans-serif;
+            }
+        }
+
+        .redditbutton {
+            position: absolute;
+
+            iframe {
+                border: none;
+                height: 69px;
+                width: 51px;
+                .transition(opacity, .5s);
             }
         }
 
