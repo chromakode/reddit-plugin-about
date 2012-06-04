@@ -523,11 +523,11 @@ var PostcardGridView = Backbone.View.extend({
 r.about.pages['about-postcards'] = function() {
     $('.abouttitle h1').hide()
 
-    var postcards = new PostcardCollection,
-        grid = new PostcardGridView({
-            el: $('#postcards'),
-            collection: postcards
-        })
+    postcards = new PostcardCollection
+    var grid = new PostcardGridView({
+        el: $('#postcards'),
+        collection: postcards
+    })
 
     var cardRouter = new PostcardRouter({zoomer: grid})
     postcards.load(function() {
