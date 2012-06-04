@@ -89,7 +89,7 @@ PostcardRouter = Backbone.Router.extend({
     initialize: function(options) {
         this.zoomer = options.zoomer
         this.zoomer.on('showcard', function(cardId, side) {
-            this.navigate('view/' + cardId + '/' + side)
+            this.navigate('view/' + cardId + '/' + side, {replace: true})
         }, this)
         this.zoomer.on('hidecard', function(cardId) {
             this.navigate('browse', {replace: true})
