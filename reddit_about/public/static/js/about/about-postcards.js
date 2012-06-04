@@ -17,8 +17,19 @@ PostcardCollection = Backbone.Collection.extend({
             this.totalCount = response.total_postcard_count
             this.chunkIndex = response.index
             this.chunkCount = _.size(this.chunkIndex)
+
+            var minId = collection.min(function(m) { return m.id }).id
             _.each(this.chunkIndex, function(bounds, idx) {
-                this.add(new PostcardsPlaceholder({chunkStart: bounds[0], id: 'chunk'+idx}))
+                // The initial fetch gives us the latest N postcards.
+                // We need to skip any chunks we already have.
+                bounds[1] = Math.min(minId, bounds[1])
+                if (bounds[1] > bounds[0]) {
+                    this.add(new PostcardsPlaceholder({
+                        chunkStart: bounds[0],
+                        chunkEnd: bounds[1],
+                        id: 'chunk'+idx
+                    }))
+                }
             }, this)
             callback()
         }, this)})
