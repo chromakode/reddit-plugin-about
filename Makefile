@@ -1,6 +1,6 @@
 LESSC=contrib/less.js/bin/lessc
 
-all: static
+all:
 
 .PHONY: clean
 clean:
