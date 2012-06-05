@@ -55,7 +55,7 @@ def ga_stats(config):
     from oauth2client.client import OAuth2WebServerFlow
     from oauth2client.tools import run, FLAGS
 
-    storage = Storage('analytics_credentials.dat')
+    storage = Storage(config.get('about_stats', 'ga_credentials_file'))
     credentials = storage.get()
 
     if credentials is None or credentials.invalid == True:
