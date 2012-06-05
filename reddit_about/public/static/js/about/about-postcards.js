@@ -37,6 +37,12 @@ PostcardCollection = Backbone.Collection.extend({
     },
 
     ensureLoaded: function(cardId, callback) {
+        if (this.get(cardId)) {
+            if (callback) {
+                callback()
+            }
+        }
+
         var chunkId
         for (var i = 0; i < this.chunkCount; i++) {
             var bounds = this.chunkIndex[i]
