@@ -9,7 +9,6 @@ setup(name='reddit_about',
     packages=find_packages(),
     install_requires=[
         'r2',
-        "Mako >= 0.4.1",
     ],
     extras_require={
         'stats': ['google-api-python-client'],
