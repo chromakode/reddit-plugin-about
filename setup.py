@@ -10,8 +10,10 @@ setup(name='reddit_about',
     install_requires=[
         'r2',
         "Mako >= 0.4.1",
-        "google-api-python-client"
     ],
+    extras_require={
+        'stats': ['google-api-python-client'],
+    },
     entry_points={
         'r2.plugin':
             ['about = reddit_about:About']
