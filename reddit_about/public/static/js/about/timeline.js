@@ -11,7 +11,7 @@ TimelineEventView = Backbone.View.extend({
     initialize: function() {
         // Scrape the model data from the DOM.
         this.model = new TimelineEvent({
-            'date': new Date(this.$('time').attr('datetime')),
+            'date': Date.parse(this.$('time').attr('datetime')),
             'class': this.$el.attr('class'),
             'title': this.$('.title').text()
         })
