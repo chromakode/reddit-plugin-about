@@ -11,6 +11,10 @@ class About(Plugin):
     needs_static_build = True
 
     config = {
+        ConfigValue.str: [
+            'about_sr_quotes',
+            'about_sr_images',
+        ],
         ConfigValue.int: [
             'about_images_count',
             'about_images_min_score'
