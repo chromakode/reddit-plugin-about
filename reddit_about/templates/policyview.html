@@ -1,0 +1,19 @@
+<div class="doc-info">
+  <h4>contents</h4>
+  ${thing.toc_html}
+
+  <h4>revisions</h4>
+  <ul>
+    %for rev in thing.revs:
+      <li
+        %if rev['id'] == thing.display_rev:
+          class="selected"
+        %endif
+      >
+        <a href="?v=${rev['id']}">${rev['title']}</a>
+      </li>
+    %endfor
+  </ul>
+</div>
+
+${thing.body_html}

@@ -61,3 +61,25 @@ class Postcards(Templated):
 
 class AlienMedia(Templated):
     pass
+
+
+class PolicyView(Templated):
+    pass
+
+
+class PolicyPage(BoringPage):
+    css_class = 'policy-page'
+
+    def __init__(self, pagename=None, content=None, **kw):
+        BoringPage.__init__(self, pagename=pagename, show_sidebar=False, content=content, **kw)
+        self.welcomebar = None
+
+    def build_toolbars(self):
+        toolbars = BoringPage.build_toolbars(self)
+        policies_buttons = [
+            NavButton(_('privacy policy'), '/privacypolicy'),
+            NavButton(_('user agreement'), '/useragreement'),
+        ]
+        policies_menu = NavMenu(policies_buttons, type='tabmenu', base_path='/about/')
+        toolbars.append(policies_menu)
+        return toolbars

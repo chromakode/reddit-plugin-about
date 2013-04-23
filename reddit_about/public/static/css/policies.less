@@ -1,0 +1,152 @@
+.transition (@property, @duration, @function: ease, @delay: 0s) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -o-transition: @arguments;
+    -ms-transition: @arguments;
+    transition: @arguments;
+}
+
+.policy-page {
+    font-size: 11pt;
+    margin: 0 auto;
+    width: 42em;
+
+    .md {
+        line-height: 1.5em;
+        overflow: visible;
+        margin: 0;
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.75em;
+            font-weight: bold;
+            margin: 1.5em 0;
+
+            a {
+                color: black;
+            }
+        }
+
+        h2 {
+            font-size: 1.35em;
+            margin: 1em 0 .75em;
+            padding-top: 1em;
+            color: #336699;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1em;
+
+            a {
+                color: black;
+            }
+        }
+
+        h1, h2, h3 {
+            text-transform: lowercase;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        em {
+            font-size: 1.25em;
+            line-height: 1.5em;
+            font-style: normal;
+            display: block;
+            background: #f2f2f2;
+            padding: .5em .75em;
+            margin: 0 -.75em;
+            margin-top: 1.5em;
+            position: relative;
+            top: -.5em;
+            border-radius: 5px;
+        }
+
+        strong {
+            display: inline-block;
+            font-size: .85em;
+            background-color: #f6e69f;
+            border: 1px solid orange;
+            padding: .25em 1em;
+            opacity: .85;
+        }
+
+        a.section {
+            float: left;
+            font-size: 10pt;
+            font-weight: normal;
+            color: #ddd;
+            margin-left: -3.5em;
+            width: 1.5em;
+            text-align: right;
+            .transition(color, 1.5s);
+        }
+
+        h1:hover > a.section,
+        h2:hover > a.section,
+        h3:hover > a.section,
+        p:hover > a.section {
+            color: #555;
+            .transition(color, 0.25s, ease, 0.5s);
+
+            &:hover {
+                .transition(color, 0s);
+            }
+        }
+    }
+
+    .doc-info {
+        float: left;
+        position: relative;
+        top: 2.5em;
+        margin-top: 1em;
+        margin-left: -12em;
+        width: 7em;
+
+        li {
+            margin: .75em 0;
+            font-size: .85em;
+
+            &.selected {
+                font-weight: bold;
+            }
+        }
+
+        .revisions li {
+            white-space: nowrap;
+        }
+
+        .toc {
+            position: relative;
+            text-transform: lowercase;
+
+            & > ul {
+                margin-bottom: 1.5em;
+
+                // only display h2 sections in toc
+
+                & > li {
+                    display: none;
+                }
+
+                ul ul {
+                    display: none;
+                }
+            }
+
+            .location {
+                position: absolute;
+                left: -11px;
+                margin-top: 2px;
+                border: 5px solid transparent;
+                border-left-color: orangered;
+            }
+        }
+    }
+}

@@ -14,6 +14,8 @@ class About(Plugin):
         ConfigValue.str: [
             'about_sr_quotes',
             'about_sr_images',
+            'wiki_page_privacypolicy',
+            'wiki_page_useragreement',
         ],
         ConfigValue.int: [
             'about_images_count',
@@ -34,10 +36,20 @@ class About(Plugin):
             'about-team.js',
             'about-postcards.js',
             prefix='about/',
-        )
+        ),
+
+        'policies': Module('policies.js',
+            'about-utils.js',
+            'policies.js',
+            prefix='about/',
+        ),
     }
 
     def add_routes(self, mc):
+        mc('/about/:page', controller='policies', action='policy_page',
+           conditions={'function':not_in_sr},
+           requirements={'page':'privacypolicy|useragreement'})
+
         # handle wildcard after /about/:action/ for postcard pushState URLs.
         for route in ('/about/:action', '/about/:action/*etc'):
             mc(route, controller='about', conditions={'function':not_in_sr})
@@ -56,3 +68,6 @@ class About(Plugin):
         self.team_data = load('team.json')
         self.colors_data = load('colors.json')
 
+        from r2.config import templates
+        from policies import PoliciesController, PolicyViewJsonTemplate
+        templates.api('policyview', PolicyViewJsonTemplate)
